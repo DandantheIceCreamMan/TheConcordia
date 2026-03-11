@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>School Social Club</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <h1>School Social Events Club</h1>
+        <p class="tagline">
+          Building community through events, connections, and shared experiences.
+        </p>
+        <nav class="main-nav">
+          <a href="#events">Upcoming Events</a>
+          <a href="#event-ideas">Propose an Event</a>
+          <a href="#polls">Polls</a>
+          <a href="#newsletter">Newsletter</a>
+          <a href="#join">Join & Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="mission" id="mission">
+        <div class="container">
+          <h2>Our Mission</h2>
+          <p>
+            The Social Events Club exists to make campus feel smaller, friendlier,
+            and more fun. We organize inclusive events where students can meet new
+            people, try new things, and take a break from coursework.
+          </p>
+          <p>
+            Use this site to explore upcoming events, suggest ideas, vote in polls,
+            and stay up to date through our newsletter.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="events">
+        <div class="container">
+          <h2>Upcoming Events</h2>
+          <ul id="events-list">
+            <!-- Filled by JavaScript from /api/events -->
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="event-ideas">
+        <div class="container">
+          <h2>Propose an Event Idea</h2>
+          <p>
+            Have an idea for something fun the club should host? Share it with us!
+          </p>
+          <form id="event-idea-form">
+            <div class="form-row">
+              <label for="idea-name">Name (optional)</label>
+              <input id="idea-name" name="name" type="text" />
+            </div>
+            <div class="form-row">
+              <label for="idea-email">Email (optional)</label>
+              <input id="idea-email" name="email" type="email" />
+            </div>
+            <div class="form-row">
+              <label for="idea-text">Your event idea</label>
+              <textarea id="idea-text" name="idea" required></textarea>
+            </div>
+            <button type="submit">Submit Idea</button>
+            <p id="event-idea-message" class="form-message"></p>
+          </form>
+        </div>
+      </section>
+
+      <section class="section" id="polls">
+        <div class="container">
+          <h2>Polls</h2>
+          <p>Vote to help us decide what to host next.</p>
+          <div id="polls-container">
+            <!-- Filled by JavaScript from /api/polls -->
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="newsletter">
+        <div class="container">
+          <h2>Newsletter</h2>
+          <div class="newsletter-layout">
+            <div class="newsletter-subscribe">
+              <h3>Subscribe</h3>
+              <p>
+                Get event announcements and recaps delivered to your inbox.
+              </p>
+              <form id="newsletter-form">
+                <div class="form-row">
+                  <label for="newsletter-email">Email</label>
+                  <input
+                    id="newsletter-email"
+                    name="email"
+                    type="email"
+                    required
+                  />
+                </div>
+                <button type="submit">Subscribe</button>
+                <p id="newsletter-message" class="form-message"></p>
+              </form>
+            </div>
+
+            <div class="newsletter-archive">
+              <h3>Newsletter Archive</h3>
+              <ul id="newsletter-list">
+                <!-- Filled by JavaScript from /api/newsletters -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="join-footer" id="join">
+      <div class="container">
+        <h2>Join the Social Events Club</h2>
+        <div class="join-grid">
+          <div class="join-form">
+            <h3>Sign Up</h3>
+            <form id="club-signup-form">
+              <div class="form-row">
+                <label for="signup-name">Name</label>
+                <input id="signup-name" name="name" type="text" required />
+              </div>
+              <div class="form-row">
+                <label for="signup-email">Email</label>
+                <input id="signup-email" name="email" type="email" required />
+              </div>
+              <div class="form-row">
+                <label for="signup-year">Year of study (optional)</label>
+                <input id="signup-year" name="yearOfStudy" type="text" />
+              </div>
+              <button type="submit">Join the Club</button>
+              <p id="signup-message" class="form-message"></p>
+            </form>
+          </div>
+
+          <div class="join-info">
+            <h3>Founder & Contact</h3>
+            <p><strong>Founder:</strong> [Your Name]</p>
+            <p><strong>Email:</strong> <a href="mailto:club@example.edu">club@example.edu</a></p>
+            <p>
+              <strong>Meeting place:</strong> Student Union, Room 210
+            </p>
+          </div>
+        </div>
+        <p class="copyright">
+          &copy; <span id="year"></span> School Social Events Club
+        </p>
+      </div>
+    </footer>
+
+    <script src="main.js"></script>
+  </body>
+  </html>
+
