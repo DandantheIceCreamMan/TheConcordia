@@ -107,6 +107,30 @@ body {
   border-bottom-color: var(--color-gold);
 }
 
+/* —— Hogwarts-style header ornament (double line + flourish) —— */
+.header-ornament {
+  height: 0;
+  border-bottom: 3px double var(--color-gold);
+  margin: 0 var(--space-lg);
+  position: relative;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 var(--space-lg);
+}
+.header-ornament::before {
+  content: "◆";
+  position: absolute;
+  left: 50%;
+  bottom: -0.5em;
+  transform: translateX(-50%);
+  background: var(--color-oxford);
+  color: var(--color-gold);
+  font-size: 0.6rem;
+  padding: 0 0.5em;
+  letter-spacing: 0.2em;
+}
+
 /* —— Typography —— */
 h1, h2, h3, h4 {
   font-family: var(--font-heading);
@@ -172,10 +196,213 @@ h3 {
   margin-bottom: 0;
 }
 
+/* Hero ornamental borders (Gothic frame feel) */
+.hero-ornament {
+  position: absolute;
+  left: var(--space-lg);
+  right: var(--space-lg);
+  height: 12px;
+  z-index: 1;
+  background: linear-gradient(90deg, transparent 0%, rgba(212, 168, 75, 0.35) 20%, rgba(212, 168, 75, 0.5) 50%, rgba(212, 168, 75, 0.35) 80%, transparent 100%);
+  opacity: 0.9;
+}
+.hero-ornament--top {
+  top: var(--space-lg);
+}
+.hero-ornament--bottom {
+  bottom: var(--space-lg);
+}
+
+/* —— Event types (Lady Bird / Sky lounge style: full-bleed photo bands) —— */
+.event-types {
+  padding: 0;
+}
+
+.event-types-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  font-size: 1.5rem;
+  margin: 0;
+  padding: var(--space-xl) var(--space-lg);
+  background: var(--color-ivory);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.event-types-title-text {
+  white-space: nowrap;
+}
+
+.ornament-line {
+  display: inline-block;
+  width: 4em;
+  max-width: 80px;
+  height: 0;
+  border-top: 2px solid var(--color-border);
+  vertical-align: middle;
+}
+.ornament-line--short {
+  width: 2.5em;
+  max-width: 50px;
+}
+.ornament-line--gold {
+  border-top-color: rgba(212, 168, 75, 0.6);
+}
+
+.event-type-band {
+  display: block;
+  position: relative;
+  min-height: 55vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-decoration: none;
+  color: var(--color-ivory);
+  overflow: hidden;
+}
+
+.event-type-band-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(15, 20, 25, 0.4) 0%, rgba(15, 20, 25, 0.7) 100%);
+  transition: opacity 0.3s ease;
+}
+
+.event-type-band:hover .event-type-band-overlay {
+  opacity: 0.85;
+}
+
+.event-type-band-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 55vh;
+  padding: var(--space-xl);
+}
+
+.event-type-band-label {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  padding: 0.25em 0.5em;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: rgba(15, 20, 25, 0.25);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.event-type-band:hover .event-type-band-label {
+  background: rgba(15, 20, 25, 0.5);
+  border-color: var(--color-gold-light);
+  box-shadow: 0 0 0 1px rgba(212, 168, 75, 0.3);
+}
+
+/* Thin ornamental divider between bands */
+.event-type-band + .event-type-band::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 0;
+  border-top: 2px solid rgba(212, 168, 75, 0.5);
+  z-index: 2;
+}
+.event-type-band + .event-type-band::after {
+  content: "◆";
+  position: absolute;
+  top: -0.5em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5rem;
+  color: var(--color-gold-light);
+  background: transparent;
+  z-index: 2;
+}
+
+/* Placeholder photos – replace with your own in images/ */
+.event-type-band--dinners {
+  background-image: url("https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920");
+}
+.event-type-band--parties {
+  background-image: url("https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1920");
+}
+.event-type-band--museum {
+  background-image: url("https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=1920");
+}
+.event-type-band--outings {
+  background-image: url("https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1920");
+}
+
 /* —— Mission & sections —— */
 .mission {
   background: var(--color-ivory);
   padding: var(--space-2xl) 0;
+}
+
+.mission--ornament {
+  position: relative;
+}
+
+.mission-divider {
+  height: 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  margin: 0 auto var(--space-xl);
+  max-width: 200px;
+  position: relative;
+}
+.mission-divider::before {
+  content: "❧";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--color-ivory);
+  color: var(--color-burgundy);
+  font-size: 0.75rem;
+  padding: 0 0.4em;
+}
+
+.mission-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* —— Join footer ornaments —— */
+.join-footer {
+  position: relative;
+}
+
+.join-footer-ornament {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 3px double var(--color-gold);
+  opacity: 0.7;
+}
+
+.join-footer-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  color: var(--color-ivory);
 }
 
 .mission p {
@@ -326,6 +553,10 @@ button:hover {
   color: var(--color-ivory);
   border-bottom-color: rgba(255, 255, 255, 0.2);
   margin-bottom: var(--space-lg);
+}
+.join-footer-title {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .join-footer h3 {
