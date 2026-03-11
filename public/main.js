@@ -59,7 +59,7 @@ function renderPolls(polls) {
     const optionsHtml = poll.options
       .map(
         (opt) => `
-        <button data-poll-id="${poll.id}" data-option-id="${opt.id}">
+        <button type="button" data-poll-id="${poll.id}" data-option-id="${opt.id}">
           ${opt.label} (${opt.votes})
         </button>
       `
@@ -84,11 +84,10 @@ function renderPolls(polls) {
     if (!pollId || !optionId) return;
 
     try {
-      const updatedPolls = await fetchJSON(`/api/polls/${pollId}/vote`, {
+      await fetchJSON(`/api/polls/${pollId}/vote`, {
         method: "POST",
         body: JSON.stringify({ optionId })
       });
-      // We receive a single updated poll back; update UI by reloading polls.
       await loadPolls();
     } catch (error) {
       console.error("Failed to submit vote", error);
@@ -232,8 +231,10 @@ function setFooterYear() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await Promise.all([loadEvents(), loadPolls(), loadNewsletters()]);
-  setupForms();
   setFooterYear();
-});
+  setupForms();
 
+  if (document.getElementById("events-list")) await loadEvents();
+  if (document.getElementById("polls-container")) await loadPolls();
+  if (document.getElementById("newsletter-list")) await loadNewsletters();
+});

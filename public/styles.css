@@ -1,68 +1,206 @@
-/* Minimal structure-focused styles.
-   Feel free to replace all of this later with your own design. */
+/* UATX Concordia – Liberal arts / Oxford-inspired theme, slightly modern */
+
+:root {
+  --color-ink: #1a1a1a;
+  --color-ink-muted: #4a4a4a;
+  --color-cream: #f6f4ef;
+  --color-ivory: #fdfcfa;
+  --color-parchment: #ebe7df;
+  --color-oxford: #0f1419;
+  --color-forest: #1a2e1a;
+  --color-burgundy: #5c2a2e;
+  --color-burgundy-hover: #722f37;
+  --color-gold: #b8860b;
+  --color-gold-light: #d4a84b;
+  --color-border: #d4cfc4;
+  --font-heading: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Lora", Georgia, serif;
+  --space-unit: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  line-height: 1.6;
-  background-color: #f7f7f7;
-  color: #222;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--color-ink);
+  background-color: var(--color-cream);
 }
 
 .container {
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 0 var(--space-lg);
 }
 
+/* —— Header: generous spacing, clear hierarchy —— */
 .site-header {
-  background: #1f3b5c;
-  color: #fff;
+  background: var(--color-oxford);
+  color: var(--color-ivory);
+  padding: var(--space-xl) 0;
 }
 
-.site-header h1 {
-  margin-bottom: 0.25rem;
+.header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-xl);
+}
+
+.brand {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.site-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  letter-spacing: 0.02em;
+  margin: 0 0 0.35em 0;
+  line-height: 1.2;
+  color: var(--color-ivory);
 }
 
 .tagline {
-  margin-top: 0;
-  margin-bottom: 1rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-style: italic;
+  margin: 0;
+  opacity: 0.92;
+  color: var(--color-parchment);
 }
 
 .main-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: var(--space-md) var(--space-lg);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .main-nav a {
-  color: #fff;
+  color: var(--color-gold-light);
   text-decoration: none;
   font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.25em 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .main-nav a:hover {
-  text-decoration: underline;
+  color: var(--color-ivory);
+  border-bottom-color: var(--color-gold);
 }
 
+/* —— Typography —— */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-ink);
+  line-height: 1.3;
+}
+
+h2 {
+  font-size: 1.75rem;
+  margin-top: 0;
+  margin-bottom: var(--space-md);
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--color-border);
+}
+
+h3 {
+  font-size: 1.25rem;
+  margin-top: 0;
+  margin-bottom: var(--space-unit);
+}
+
+/* —— Hero / description (background photo) —— */
+.hero {
+  position: relative;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  padding: var(--space-2xl) 0;
+}
+
+.hero--with-bg {
+  /* Filler – replace with your own: url("images/events-bg.jpg") */
+  background-image: url("https://images.unsplash.com/photo-1540575467063-178bf50e2f0a?w=1920");
+  background-size: cover;
+  background-position: center;
+  background-attachment: scroll;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 20, 25, 0.6);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  color: var(--color-ivory);
+}
+
+.hero-content h2 {
+  color: var(--color-ivory);
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+  margin-bottom: var(--space-lg);
+}
+
+.hero-content p {
+  max-width: 42em;
+  margin-bottom: var(--space-md);
+}
+.hero-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* —— Mission & sections —— */
 .mission {
-  background: #ffffff;
+  background: var(--color-ivory);
+  padding: var(--space-2xl) 0;
+}
+
+.mission p {
+  max-width: 42em;
+  margin-bottom: var(--space-md);
+}
+.mission p:last-child {
+  margin-bottom: 0;
 }
 
 .section {
-  background: #f0f2f6;
-  border-top: 1px solid #dde2ee;
+  background: var(--color-ivory);
+  padding: var(--space-xl) 0;
+  border-top: 1px solid var(--color-border);
 }
 
 .section:nth-of-type(even) {
-  background: #ffffff;
+  background: var(--color-parchment);
 }
 
 .section h2 {
-  margin-top: 0;
+  margin-bottom: var(--space-lg);
 }
 
+/* —— Lists & cards —— */
 ul {
   list-style: none;
   padding: 0;
@@ -71,32 +209,48 @@ ul {
 
 .event-item,
 .newsletter-item {
-  background: #ffffff;
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  background: var(--color-ivory);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: var(--space-lg);
+  margin-bottom: var(--space-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.event-item h3,
+.newsletter-item h4 {
+  font-family: var(--font-heading);
+  margin-top: 0;
+  margin-bottom: 0.5em;
 }
 
 .newsletter-date {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--color-ink-muted);
+  margin: 0 0 0.5em 0;
 }
 
+/* —— Polls —— */
 .poll {
-  background: #ffffff;
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  background: var(--color-ivory);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.poll h3 {
+  margin-bottom: var(--space-md);
 }
 
 .poll-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-unit);
 }
 
+/* —— Forms —— */
 form {
   max-width: 480px;
 }
@@ -104,57 +258,85 @@ form {
 .form-row {
   display: flex;
   flex-direction: column;
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-md);
 }
 
 label {
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35em;
+  font-size: 0.95rem;
 }
 
 input,
 textarea {
-  padding: 0.5rem;
-  font: inherit;
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
   border-radius: 4px;
-  border: 1px solid #ccd1dd;
+  border: 1px solid var(--color-border);
+  background: var(--color-ivory);
+  transition: border-color 0.2s ease;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-burgundy);
 }
 
 button {
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.25rem;
   border: none;
   border-radius: 4px;
-  background: #1f3b5c;
-  color: #fff;
+  background: var(--color-burgundy);
+  color: var(--color-ivory);
+  font-family: var(--font-body);
   font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 button:hover {
-  background: #24476f;
+  background: var(--color-burgundy-hover);
 }
 
 .form-message {
-  margin-top: 0.5rem;
+  margin-top: var(--space-unit);
   font-size: 0.9rem;
+  color: var(--color-ink-muted);
 }
 
+/* —— Newsletter layout —— */
 .newsletter-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  gap: 2rem;
+  gap: var(--space-xl);
 }
 
+/* —— Join footer (distinct dark block) —— */
 .join-footer {
-  background: #162437;
-  color: #ffffff;
-  margin-top: 2rem;
+  background: var(--color-forest);
+  color: var(--color-ivory);
+  padding: var(--space-2xl) 0;
+  margin-top: 0;
+}
+
+.join-footer h2 {
+  color: var(--color-ivory);
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+  margin-bottom: var(--space-lg);
+}
+
+.join-footer h3 {
+  color: var(--color-ivory);
+  margin-bottom: var(--space-unit);
 }
 
 .join-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  gap: 2rem;
+  gap: var(--space-xl);
 }
 
 .join-form form {
@@ -162,19 +344,65 @@ button:hover {
 }
 
 .join-info a {
-  color: #ffdf6f;
+  color: var(--color-gold-light);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.copyright {
-  margin-top: 2rem;
+.join-info a:hover {
+  color: var(--color-gold);
+  border-bottom-color: var(--color-gold);
+}
+
+.join-footer .copyright {
+  margin-top: var(--space-xl);
   font-size: 0.85rem;
-  opacity: 0.85;
+  opacity: 0.88;
+  color: var(--color-parchment);
 }
 
+/* —— Simple page footer (inner pages) —— */
+.page-main {
+  min-height: 40vh;
+}
+
+.site-footer {
+  background: var(--color-oxford);
+  color: var(--color-parchment);
+  padding: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+.site-footer .copyright {
+  margin-top: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.site-footer a {
+  color: var(--color-gold-light);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--color-gold);
+}
+
+/* —— Responsive —— */
 @media (max-width: 720px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-lg);
+  }
+
+  .main-nav {
+    width: 100%;
+  }
+
   .newsletter-layout,
   .join-grid {
     grid-template-columns: 1fr;
   }
 }
-

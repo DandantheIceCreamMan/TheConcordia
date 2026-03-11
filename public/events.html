@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upcoming Events – UATX Concordia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand">
+          <h1 class="site-title">UATX Concordia</h1>
+          <p class="tagline">Society & events at the heart of campus</p>
+        </div>
+        <nav class="main-nav">
+          <a href="index.html">Home</a>
+          <a href="events.html">Upcoming Events</a>
+          <a href="propose.html">Propose an Event</a>
+          <a href="polls.html">Polls</a>
+          <a href="newsletter.html">Newsletter</a>
+          <a href="index.html#join">Join & Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-main">
+      <section class="section">
+        <div class="container">
+          <h2>Upcoming Events</h2>
+          <ul id="events-list">
+            <!-- Filled by JavaScript from /api/events -->
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p class="copyright">
+          &copy; <span id="year"></span> UATX Concordia
+          · <a href="index.html">Home</a> · <a href="index.html#join">Join & Contact</a>
+        </p>
+      </div>
+    </footer>
+
+    <script src="main.js"></script>
+  </body>
+</html>

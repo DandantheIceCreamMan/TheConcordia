@@ -3,124 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>School Social Club</title>
+    <title>UATX Concordia – Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="site-header">
-      <div class="container">
-        <h1>School Social Events Club</h1>
-        <p class="tagline">
-          Building community through events, connections, and shared experiences.
-        </p>
-        <nav class="main-nav">
-          <a href="#events">Upcoming Events</a>
-          <a href="#event-ideas">Propose an Event</a>
-          <a href="#polls">Polls</a>
-          <a href="#newsletter">Newsletter</a>
-          <a href="#join">Join & Contact</a>
+      <div class="container header-inner">
+        <div class="brand">
+          <h1 class="site-title">UATX Concordia</h1>
+          <p class="tagline">Society & events at the heart of campus</p>
+        </div>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="index.html">Home</a>
+          <a href="events.html">Upcoming Events</a>
+          <a href="propose.html">Propose an Event</a>
+          <a href="polls.html">Polls</a>
+          <a href="newsletter.html">Newsletter</a>
+          <a href="index.html#join">Join & Contact</a>
         </nav>
       </div>
     </header>
 
     <main>
+      <section class="hero hero--with-bg" id="description">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+          <h2>What We Do</h2>
+          <p>
+            The Social Events Club runs a full calendar of get-togethers for
+            everyone on campus. We host mixers, game nights, movie screenings,
+            outdoor hangouts, and one-off theme events so there’s always
+            something to look forward to.
+          </p>
+          <p>
+            Whether you want to meet new people, try a new hobby, or just take a
+            break from studying, our events are designed to be welcoming and
+            low-pressure. We also listen to you: students can propose event
+            ideas and vote in polls to shape what we do next.
+          </p>
+        </div>
+      </section>
+
       <section class="mission" id="mission">
         <div class="container">
           <h2>Our Mission</h2>
           <p>
-            The Social Events Club exists to make campus feel smaller, friendlier,
-            and more fun. We organize inclusive events where students can meet new
-            people, try new things, and take a break from coursework.
+            The Social Events Club exists to make campus feel smaller,
+            friendlier, and more fun. We believe that connection and belonging
+            are essential to student life, and that a few good events can turn
+            strangers into friends and the campus into a community.
           </p>
           <p>
-            Use this site to explore upcoming events, suggest ideas, vote in polls,
-            and stay up to date through our newsletter.
+            We organize inclusive, low-barrier events where students can meet new
+            people, try new things, and take a real break from coursework. Our
+            goal is to give every student a place to show up as themselves and
+            leave with at least one new connection or memory.
           </p>
-        </div>
-      </section>
-
-      <section class="section" id="events">
-        <div class="container">
-          <h2>Upcoming Events</h2>
-          <ul id="events-list">
-            <!-- Filled by JavaScript from /api/events -->
-          </ul>
-        </div>
-      </section>
-
-      <section class="section" id="event-ideas">
-        <div class="container">
-          <h2>Propose an Event Idea</h2>
           <p>
-            Have an idea for something fun the club should host? Share it with us!
+            This website is your hub: browse upcoming events, suggest ideas for
+            future events, vote in polls so we know what you want, and sign up
+            for our newsletter so you never miss an announcement. We’re here to
+            make your time at school more social and more fun.
           </p>
-          <form id="event-idea-form">
-            <div class="form-row">
-              <label for="idea-name">Name (optional)</label>
-              <input id="idea-name" name="name" type="text" />
-            </div>
-            <div class="form-row">
-              <label for="idea-email">Email (optional)</label>
-              <input id="idea-email" name="email" type="email" />
-            </div>
-            <div class="form-row">
-              <label for="idea-text">Your event idea</label>
-              <textarea id="idea-text" name="idea" required></textarea>
-            </div>
-            <button type="submit">Submit Idea</button>
-            <p id="event-idea-message" class="form-message"></p>
-          </form>
-        </div>
-      </section>
-
-      <section class="section" id="polls">
-        <div class="container">
-          <h2>Polls</h2>
-          <p>Vote to help us decide what to host next.</p>
-          <div id="polls-container">
-            <!-- Filled by JavaScript from /api/polls -->
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="newsletter">
-        <div class="container">
-          <h2>Newsletter</h2>
-          <div class="newsletter-layout">
-            <div class="newsletter-subscribe">
-              <h3>Subscribe</h3>
-              <p>
-                Get event announcements and recaps delivered to your inbox.
-              </p>
-              <form id="newsletter-form">
-                <div class="form-row">
-                  <label for="newsletter-email">Email</label>
-                  <input
-                    id="newsletter-email"
-                    name="email"
-                    type="email"
-                    required
-                  />
-                </div>
-                <button type="submit">Subscribe</button>
-                <p id="newsletter-message" class="form-message"></p>
-              </form>
-            </div>
-
-            <div class="newsletter-archive">
-              <h3>Newsletter Archive</h3>
-              <ul id="newsletter-list">
-                <!-- Filled by JavaScript from /api/newsletters -->
-              </ul>
-            </div>
-          </div>
         </div>
       </section>
     </main>
 
     <footer class="join-footer" id="join">
       <div class="container">
-        <h2>Join the Social Events Club</h2>
+        <h2>Join Concordia</h2>
         <div class="join-grid">
           <div class="join-form">
             <h3>Sign Up</h3>
@@ -152,12 +106,11 @@
           </div>
         </div>
         <p class="copyright">
-          &copy; <span id="year"></span> School Social Events Club
+          &copy; <span id="year"></span> UATX Concordia
         </p>
       </div>
     </footer>
 
     <script src="main.js"></script>
   </body>
-  </html>
-
+</html>
