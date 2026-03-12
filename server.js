@@ -27,6 +27,15 @@ const events = [
     location: "Campus residences (details after RSVP)",
     description: "A multi-course dinner that moves from one host to the next. Limited spots.",
     maxCapacity: 20
+  },
+  {
+    id: 3,
+    title: "Spring Mixer",
+    date: "2026-02-14",
+    time: "5:00 PM",
+    location: "Student Lounge",
+    description: "A past event: casual mixer with snacks and music.",
+    maxCapacity: null
   }
 ];
 
@@ -58,6 +67,7 @@ const newsletters = [
 
 const newsletterSubscribers = [];
 const clubSignups = [];
+const stories = [];
 
 // Static frontend
 app.use(express.static(path.join(__dirname, "public")));
@@ -173,6 +183,23 @@ app.post("/api/club-signups", (req, res) => {
   };
   clubSignups.push(signup);
   res.status(201).json(signup);
+});
+
+app.post("/api/stories", (req, res) => {
+  const { name, email, story } = req.body || {};
+  if (!story || String(story).trim() === "") {
+    return res.status(400).json({ error: "Your story is required." });
+  }
+  const entry = {
+    id: stories.length + 1,
+    name: name || "Anonymous",
+    email: email || null,
+    story: String(story).trim()
+  };
+  stories.push(entry);
+  res.status(201).json({
+    message: "Your tale has been sealed in the archives. The librarians are cackling. (We'll be in touch—maybe.)"
+  });
 });
 
 app.listen(PORT, () => {

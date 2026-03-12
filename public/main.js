@@ -11,16 +11,17 @@ function getEventShareUrl(eventId) {
   return `${base}event.html?id=${eventId}`;
 }
 
-function renderEvents(events) {
+function renderEvents(events, options) {
   const list = document.getElementById("events-list");
   if (!list) return;
 
+  const isPast = options && options.past;
   list.innerHTML = "";
 
   if (!events.length) {
     const li = document.createElement("li");
     li.className = "event-item";
-    li.textContent = "No events scheduled yet. Check back soon!";
+    li.textContent = isPast ? "No past events yet." : "No events scheduled yet. Check back soon!";
     list.appendChild(li);
     return;
   }
@@ -32,38 +33,45 @@ function renderEvents(events) {
         : "Open";
     const isFull = event.isFull;
     const timeLine = event.time ? ` <strong>Time:</strong> ${event.time}` : "";
+    const actionsHtml = isPast
+      ? ""
+      : `
+      <div class="event-card-actions">
+        <a href="event.html?id=${event.id}" class="btn btn-rsvp ${isFull ? "btn--disabled" : ""}">${isFull ? "Full" : "RSVP"}</a>
+        <button type="button" class="btn btn-share" data-event-id="${event.id}">Share</button>
+      </div>`;
+    const capacityHtml = isPast ? "" : `<p class="event-capacity ${isFull ? "event-capacity--full" : ""}">${capacityText}${isFull ? " (full)" : ""}</p>`;
     const li = document.createElement("li");
     li.className = "event-item";
     li.innerHTML = `
       <h3>${event.title}</h3>
       <p><strong>Date:</strong> ${event.date}${timeLine}</p>
       <p><strong>Location:</strong> ${event.location}</p>
-      <p class="event-capacity ${isFull ? "event-capacity--full" : ""}">${capacityText}${isFull ? " (full)" : ""}</p>
+      ${capacityHtml}
       <p>${event.description}</p>
-      <div class="event-card-actions">
-        <a href="event.html?id=${event.id}" class="btn btn-rsvp ${isFull ? "btn--disabled" : ""}">${isFull ? "Full" : "RSVP"}</a>
-        <button type="button" class="btn btn-share" data-event-id="${event.id}">Share</button>
-      </div>
+      ${actionsHtml}
     `;
     list.appendChild(li);
   });
 
-  list.querySelectorAll(".btn-share").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.getAttribute("data-event-id");
-      const url = getEventShareUrl(id);
-      navigator.clipboard.writeText(url).then(
-        () => {
-          const label = btn.textContent;
-          btn.textContent = "Copied!";
-          setTimeout(() => { btn.textContent = label; }, 2000);
-        },
-        () => {
-          prompt("Copy this link:", url);
-        }
-      );
+  if (!isPast) {
+    list.querySelectorAll(".btn-share").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-event-id");
+        const url = getEventShareUrl(id);
+        navigator.clipboard.writeText(url).then(
+          () => {
+            const label = btn.textContent;
+            btn.textContent = "Copied!";
+            setTimeout(() => { btn.textContent = label; }, 2000);
+          },
+          () => {
+            prompt("Copy this link:", url);
+          }
+        );
+      });
     });
-  });
+  }
 }
 
 async function loadEvents() {
@@ -72,6 +80,69 @@ async function loadEvents() {
     renderEvents(events);
   } catch (error) {
     console.error("Failed to load events", error);
+  }
+}
+
+function isPastEvent(event) {
+  const eventDate = new Date(event.date);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  eventDate.setHours(0, 0, 0, 0);
+  return eventDate < today;
+}
+
+async function loadPastEvents() {
+  try {
+    const all = await fetchJSON("/api/events");
+    const past = all.filter(isPastEvent);
+    renderEvents(past, { past: true });
+  } catch (error) {
+    console.error("Failed to load past events", error);
+  }
+}
+
+function renderCalendar(events) {
+  const container = document.getElementById("calendar-container");
+  if (!container) return;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const byMonth = {};
+  events.forEach((event) => {
+    const d = new Date(event.date);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    if (!byMonth[key]) byMonth[key] = [];
+    byMonth[key].push(event);
+  });
+
+  const months = Object.keys(byMonth).sort();
+  if (months.length === 0) {
+    container.innerHTML = "<p class=\"calendar-empty\">No events with dates yet.</p>";
+    return;
+  }
+
+  let html = "";
+  months.forEach((key) => {
+    const [year, month] = key.split("-").map(Number);
+    const monthName = new Date(year, month - 1, 1).toLocaleString("default", { month: "long", year: "numeric" });
+    const list = byMonth[key].sort((a, b) => new Date(a.date) - new Date(b.date));
+    html += `<div class="calendar-month"><h3>${monthName}</h3><ul class="calendar-events">`;
+    list.forEach((event) => {
+      const timeLine = event.time ? ` · ${event.time}` : "";
+      html += `<li><a href="event.html?id=${event.id}">${event.title}</a> — ${event.date}${timeLine}</li>`;
+    });
+    html += "</ul></div>";
+  });
+  container.innerHTML = html;
+}
+
+async function loadCalendar() {
+  try {
+    const events = await fetchJSON("/api/events");
+    renderCalendar(events);
+  } catch (error) {
+    console.error("Failed to load calendar", error);
   }
 }
 
@@ -227,6 +298,34 @@ function setupForms() {
     });
   }
 
+  const storyForm = document.getElementById("story-form");
+  const storyMessage = document.getElementById("story-message");
+  if (storyForm && storyMessage) {
+    storyForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      storyMessage.textContent = "";
+
+      const formData = new FormData(storyForm);
+      const payload = {
+        name: formData.get("name"),
+        email: formData.get("email"),
+        story: formData.get("story")
+      };
+
+      try {
+        const result = await fetchJSON("/api/stories", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        storyMessage.textContent = result.message || "Thanks for your story!";
+        storyForm.reset();
+      } catch (error) {
+        console.error("Failed to submit story", error);
+        storyMessage.textContent = "Something went wrong. Please try again.";
+      }
+    });
+  }
+
   const signupForm = document.getElementById("club-signup-form");
   const signupMessage = document.getElementById("signup-message");
   if (signupForm && signupMessage) {
@@ -362,7 +461,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     await initSingleEventPage();
     return;
   }
-  if (document.getElementById("events-list")) await loadEvents();
+  if (document.getElementById("calendar-container")) await loadCalendar();
+  else if (document.getElementById("events-list") && window.location.pathname.includes("past-events")) await loadPastEvents();
+  else if (document.getElementById("events-list")) await loadEvents();
   if (document.getElementById("polls-container")) await loadPolls();
   if (document.getElementById("newsletter-list")) await loadNewsletters();
 });

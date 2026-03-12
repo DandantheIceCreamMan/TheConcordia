@@ -16,9 +16,16 @@
           <h1 class="site-title">UATX Concordia</h1>
           <p class="tagline">Society & events at the heart of campus</p>
         </div>
-        <nav class="main-nav">
+        <nav class="main-nav" aria-label="Main navigation">
           <a href="index.html">Home</a>
-          <a href="events.html">Upcoming Events</a>
+          <div class="nav-dropdown">
+            <a href="events.html" class="nav-dropdown-trigger">Upcoming Events ▾</a>
+            <ul class="nav-dropdown-menu">
+              <li><a href="calendar.html">Calendar</a></li>
+              <li><a href="events.html">Upcoming events</a></li>
+              <li><a href="past-events.html">Past events</a></li>
+            </ul>
+          </div>
           <a href="propose.html">Propose an Event</a>
           <a href="polls.html">Polls</a>
           <a href="newsletter.html">Newsletter</a>
@@ -58,6 +65,27 @@
                 <!-- Filled by JavaScript from /api/newsletters -->
               </ul>
             </div>
+          </div>
+
+          <div class="newsletter-story">
+            <h3>Submit a story</h3>
+            <p>Have a story from a Concordia event or campus life? Share it and we might include it in a future newsletter.</p>
+            <form id="story-form">
+              <div class="form-row">
+                <label for="story-name">Name (optional)</label>
+                <input id="story-name" name="name" type="text" />
+              </div>
+              <div class="form-row">
+                <label for="story-email">Email (optional)</label>
+                <input id="story-email" name="email" type="email" />
+              </div>
+              <div class="form-row">
+                <label for="story-text">Your story</label>
+                <textarea id="story-text" name="story" rows="5" required></textarea>
+              </div>
+              <button type="submit">Submit story</button>
+              <p id="story-message" class="form-message form-message--story"></p>
+            </form>
           </div>
         </div>
       </section>

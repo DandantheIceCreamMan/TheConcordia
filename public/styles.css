@@ -107,6 +107,49 @@ body {
   border-bottom-color: var(--color-gold);
 }
 
+/* —— Upcoming Events dropdown —— */
+.nav-dropdown {
+  position: relative;
+}
+.nav-dropdown-trigger {
+  display: inline-block;
+}
+.nav-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin: 0;
+  padding: 0.5rem 0;
+  list-style: none;
+  background: var(--color-oxford);
+  border: 1px solid rgba(212, 168, 75, 0.3);
+  border-top: none;
+  min-width: 11rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 10;
+}
+.nav-dropdown:hover .nav-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+}
+.nav-dropdown-menu li {
+  margin: 0;
+}
+.nav-dropdown-menu a {
+  display: block;
+  padding: 0.4rem 1rem;
+  color: var(--color-gold-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-bottom: none;
+}
+.nav-dropdown-menu a:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-ivory);
+}
+
 /* —— Hogwarts-style header ornament (double line + flourish) —— */
 .header-ornament {
   height: 0;
@@ -573,6 +616,39 @@ ul {
   background: var(--color-burgundy-hover);
 }
 
+/* —— Calendar page —— */
+.calendar-month {
+  margin-bottom: var(--space-xl);
+}
+.calendar-month h3 {
+  margin-bottom: var(--space-md);
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid var(--color-border);
+}
+.calendar-events {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.calendar-events li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-parchment);
+}
+.calendar-events li:last-child {
+  border-bottom: none;
+}
+.calendar-events a {
+  color: var(--color-burgundy);
+  text-decoration: none;
+  font-weight: 500;
+}
+.calendar-events a:hover {
+  text-decoration: underline;
+}
+.calendar-empty {
+  color: var(--color-ink-muted);
+}
+
 /* —— Polls —— */
 .poll {
   background: var(--color-ivory);
@@ -655,6 +731,26 @@ button:hover {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   gap: var(--space-xl);
+}
+
+.newsletter-story {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--color-border);
+}
+.newsletter-story h3 {
+  margin-bottom: var(--space-unit);
+}
+.newsletter-story p {
+  margin-bottom: var(--space-md);
+  color: var(--color-ink-muted);
+}
+.form-message--story {
+  font-style: italic;
+  margin-top: var(--space-unit);
+}
+.form-message--story:not(:empty) {
+  color: var(--color-burgundy);
 }
 
 /* —— Join footer (distinct dark block) —— */
