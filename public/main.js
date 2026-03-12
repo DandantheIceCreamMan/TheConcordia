@@ -6,6 +6,11 @@ async function fetchJSON(url, options) {
   return response.json();
 }
 
+function getEventShareUrl(eventId) {
+  const base = window.location.origin + window.location.pathname.replace(/[^/]*$/, "");
+  return `${base}event.html?id=${eventId}`;
+}
+
 function renderEvents(events) {
   const list = document.getElementById("events-list");
   if (!list) return;
@@ -14,21 +19,50 @@ function renderEvents(events) {
 
   if (!events.length) {
     const li = document.createElement("li");
+    li.className = "event-item";
     li.textContent = "No events scheduled yet. Check back soon!";
     list.appendChild(li);
     return;
   }
 
   events.forEach((event) => {
+    const capacityText =
+      event.maxCapacity != null
+        ? `${event.rsvpCount}/${event.maxCapacity} spots`
+        : "Open";
+    const isFull = event.isFull;
+    const timeLine = event.time ? ` <strong>Time:</strong> ${event.time}` : "";
     const li = document.createElement("li");
     li.className = "event-item";
     li.innerHTML = `
       <h3>${event.title}</h3>
-      <p><strong>Date:</strong> ${event.date}</p>
+      <p><strong>Date:</strong> ${event.date}${timeLine}</p>
       <p><strong>Location:</strong> ${event.location}</p>
+      <p class="event-capacity ${isFull ? "event-capacity--full" : ""}">${capacityText}${isFull ? " (full)" : ""}</p>
       <p>${event.description}</p>
+      <div class="event-card-actions">
+        <a href="event.html?id=${event.id}" class="btn btn-rsvp ${isFull ? "btn--disabled" : ""}">${isFull ? "Full" : "RSVP"}</a>
+        <button type="button" class="btn btn-share" data-event-id="${event.id}">Share</button>
+      </div>
     `;
     list.appendChild(li);
+  });
+
+  list.querySelectorAll(".btn-share").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-event-id");
+      const url = getEventShareUrl(id);
+      navigator.clipboard.writeText(url).then(
+        () => {
+          const label = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(() => { btn.textContent = label; }, 2000);
+        },
+        () => {
+          prompt("Copy this link:", url);
+        }
+      );
+    });
   });
 }
 
@@ -230,10 +264,104 @@ function setFooterYear() {
   }
 }
 
+function getQueryId() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  return id ? Number(id) : null;
+}
+
+async function initSingleEventPage() {
+  const detailEl = document.getElementById("event-detail");
+  const rsvpArea = document.getElementById("event-rsvp-area");
+  const shareArea = document.getElementById("event-share-area");
+  const shareInput = document.getElementById("share-url");
+  const copyBtn = document.getElementById("copy-share-btn");
+  if (!detailEl) return;
+
+  const eventId = getQueryId();
+  if (!eventId) {
+    window.location.href = "events.html";
+    return;
+  }
+
+  try {
+    const event = await fetchJSON(`/api/events/${eventId}`);
+    const timeLine = event.time ? ` <strong>Time:</strong> ${event.time}` : "";
+    const capacityText =
+      event.maxCapacity != null
+        ? `${event.rsvpCount}/${event.maxCapacity} spots`
+        : "Open";
+    detailEl.innerHTML = `
+      <article class="event-single">
+        <h2>${event.title}</h2>
+        <p><strong>Date:</strong> ${event.date}${timeLine}</p>
+        <p><strong>Location:</strong> ${event.location}</p>
+        <p class="event-capacity ${event.isFull ? "event-capacity--full" : ""}">${capacityText}${event.isFull ? " (full)" : ""}</p>
+        <p>${event.description}</p>
+      </article>
+    `;
+
+    if (!event.isFull) {
+      rsvpArea.hidden = false;
+    }
+    shareArea.hidden = false;
+    const shareUrl = getEventShareUrl(event.id);
+    if (shareInput) shareInput.value = shareUrl;
+    if (copyBtn) {
+      copyBtn.addEventListener("click", () => {
+        shareInput.select();
+        navigator.clipboard.writeText(shareUrl).then(
+          () => {
+            copyBtn.textContent = "Copied!";
+            setTimeout(() => { copyBtn.textContent = "Copy link"; }, 2000);
+          },
+          () => copyBtn.textContent = "Copy link"
+        );
+      });
+    }
+
+    const form = document.getElementById("rsvp-form");
+    const messageEl = document.getElementById("rsvp-message");
+    if (form && messageEl) {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        messageEl.textContent = "";
+        const formData = new FormData(form);
+        const payload = { name: formData.get("name"), email: formData.get("email") };
+        const res = await fetch(`/api/events/${eventId}/rsvp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          messageEl.textContent = data.error || "Something went wrong. Try again.";
+          return;
+        }
+        messageEl.textContent = "You're on the list! We'll see you there.";
+        form.reset();
+        const capEl = detailEl.querySelector(".event-capacity");
+        if (capEl) capEl.textContent = data.maxCapacity != null
+          ? `${data.rsvpCount}/${data.maxCapacity} spots`
+          : `${data.rsvpCount} going`;
+        form.hidden = true;
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    detailEl.innerHTML = "<p>Event not found.</p>";
+    setTimeout(() => { window.location.href = "events.html"; }, 1500);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   setFooterYear();
   setupForms();
 
+  if (document.getElementById("event-detail")) {
+    await initSingleEventPage();
+    return;
+  }
   if (document.getElementById("events-list")) await loadEvents();
   if (document.getElementById("polls-container")) await loadPolls();
   if (document.getElementById("newsletter-list")) await loadNewsletters();

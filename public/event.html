@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Upcoming Events – UATX Concordia</title>
+    <title>Event – UATX Concordia</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
@@ -30,11 +30,34 @@
     <main class="page-main">
       <section class="section">
         <div class="container">
-          <h2>Upcoming Events</h2>
-          <p class="section-intro">RSVP to save your spot; use <strong>Share</strong> to send the link to a friend so they can see the event and sign up too.</p>
-          <ul id="events-list">
-            <!-- Filled by JavaScript from /api/events -->
-          </ul>
+          <p class="back-link"><a href="events.html">← All events</a></p>
+          <div id="event-detail">
+            <!-- Filled by JavaScript -->
+            <p class="loading">Loading event…</p>
+          </div>
+          <div id="event-rsvp-area" class="event-rsvp-area" hidden>
+            <h3>RSVP</h3>
+            <form id="rsvp-form">
+              <div class="form-row">
+                <label for="rsvp-name">Name</label>
+                <input id="rsvp-name" name="name" type="text" required />
+              </div>
+              <div class="form-row">
+                <label for="rsvp-email">Email</label>
+                <input id="rsvp-email" name="email" type="email" required />
+              </div>
+              <button type="submit">I'm in</button>
+              <p id="rsvp-message" class="form-message"></p>
+            </form>
+          </div>
+          <div id="event-share-area" class="event-share-area" hidden>
+            <h3>Share this event</h3>
+            <p class="event-share-hint">Send this link to a friend so they can see the event and RSVP.</p>
+            <div class="share-link-box">
+              <input type="text" id="share-url" readonly aria-label="Shareable event URL" />
+              <button type="button" id="copy-share-btn" class="copy-btn">Copy link</button>
+            </div>
+          </div>
         </div>
       </section>
     </main>

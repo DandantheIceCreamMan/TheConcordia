@@ -426,6 +426,11 @@ h3 {
 .section h2 {
   margin-bottom: var(--space-lg);
 }
+.section-intro {
+  color: var(--color-ink-muted);
+  margin: -0.5rem 0 var(--space-lg);
+  max-width: 42em;
+}
 
 /* —— Lists & cards —— */
 ul {
@@ -455,6 +460,117 @@ ul {
   font-size: 0.9rem;
   color: var(--color-ink-muted);
   margin: 0 0 0.5em 0;
+}
+
+/* —— Event capacity, RSVP & Share —— */
+.event-capacity {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+  margin: 0.5em 0;
+}
+.event-capacity--full {
+  color: var(--color-burgundy);
+}
+
+.event-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-unit);
+  margin-top: var(--space-md);
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.btn-rsvp {
+  background: var(--color-burgundy);
+  color: var(--color-ivory);
+}
+.btn-rsvp:hover:not(.btn--disabled) {
+  background: var(--color-burgundy-hover);
+}
+.btn--disabled {
+  background: var(--color-border);
+  color: var(--color-ink-muted);
+  cursor: default;
+  pointer-events: none;
+}
+.btn-share {
+  background: transparent;
+  color: var(--color-burgundy);
+  border: 2px solid var(--color-burgundy);
+}
+.btn-share:hover {
+  background: var(--color-burgundy);
+  color: var(--color-ivory);
+}
+
+.back-link {
+  margin-bottom: var(--space-lg);
+}
+.back-link a {
+  color: var(--color-ink-muted);
+  text-decoration: none;
+}
+.back-link a:hover {
+  color: var(--color-burgundy);
+}
+
+.event-single {
+  margin-bottom: var(--space-xl);
+}
+.event-single h2 {
+  margin-top: 0;
+}
+
+.event-rsvp-area,
+.event-share-area {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+}
+.event-share-hint {
+  font-size: 0.95rem;
+  color: var(--color-ink-muted);
+  margin-bottom: var(--space-unit);
+}
+.share-link-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-unit);
+  align-items: center;
+}
+.share-link-box input {
+  flex: 1;
+  min-width: 200px;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-parchment);
+}
+.copy-btn {
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: var(--color-burgundy);
+  color: var(--color-ivory);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.copy-btn:hover {
+  background: var(--color-burgundy-hover);
 }
 
 /* —— Polls —— */

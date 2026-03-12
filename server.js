@@ -14,10 +14,24 @@ const events = [
     id: 1,
     title: "Welcome Social",
     date: "2026-04-05",
+    time: "6:00 PM",
     location: "Student Union Hall",
-    description: "Kick-off event to meet other members of the social club."
+    description: "Kick-off event to meet other members of the social club.",
+    maxCapacity: null
+  },
+  {
+    id: 2,
+    title: "Progressive Dinner",
+    date: "2026-04-12",
+    time: "7:00 PM",
+    location: "Campus residences (details after RSVP)",
+    description: "A multi-course dinner that moves from one host to the next. Limited spots.",
+    maxCapacity: 20
   }
 ];
+
+// RSVPs per event: { eventId: [ { name, email }, ... ] }
+const eventRsvps = {};
 
 const eventIdeas = [];
 
@@ -48,9 +62,47 @@ const clubSignups = [];
 // Static frontend
 app.use(express.static(path.join(__dirname, "public")));
 
+// Helper: event with RSVP counts for display
+function eventWithRsvpCount(event) {
+  const rsvps = eventRsvps[event.id] || [];
+  const rsvpCount = rsvps.length;
+  const spotsLeft = event.maxCapacity != null ? Math.max(0, event.maxCapacity - rsvpCount) : null;
+  const isFull = event.maxCapacity != null && rsvpCount >= event.maxCapacity;
+  return { ...event, rsvpCount, spotsLeft, isFull };
+}
+
 // API routes
 app.get("/api/events", (req, res) => {
-  res.json(events);
+  res.json(events.map(eventWithRsvpCount));
+});
+
+app.get("/api/events/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const event = events.find((e) => e.id === id);
+  if (!event) {
+    return res.status(404).json({ error: "Event not found." });
+  }
+  res.json(eventWithRsvpCount(event));
+});
+
+app.post("/api/events/:id/rsvp", (req, res) => {
+  const id = Number(req.params.id);
+  const event = events.find((e) => e.id === id);
+  if (!event) {
+    return res.status(404).json({ error: "Event not found." });
+  }
+  const { name, email } = req.body || {};
+  if (!name || !email) {
+    return res.status(400).json({ error: "Name and email are required." });
+  }
+  if (!eventRsvps[id]) eventRsvps[id] = [];
+  const rsvps = eventRsvps[id];
+  const atCapacity = event.maxCapacity != null && rsvps.length >= event.maxCapacity;
+  if (atCapacity) {
+    return res.status(400).json({ error: "This event is full." });
+  }
+  rsvps.push({ name, email });
+  res.status(201).json(eventWithRsvpCount(event));
 });
 
 app.post("/api/events/ideas", (req, res) => {
