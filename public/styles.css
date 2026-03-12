@@ -274,10 +274,13 @@ h3 {
 }
 
 .hero-title {
-  font-family: "Cinzel Decorative", var(--font-heading);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-size: 1.9rem;
+  font-family: "Marcellus SC", var(--font-heading);
+  letter-spacing: 0.18em;
+  text-transform: none;
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--color-gold-light);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 .hero-content p {
