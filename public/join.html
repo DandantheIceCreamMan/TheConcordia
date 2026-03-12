@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Propose an Event – UATX Concordia</title>
+    <title>Join &amp; Contact – UATX Concordia</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
@@ -39,28 +39,39 @@
     <main class="page-main">
       <section class="section">
         <div class="container">
-          <h2>Propose an evening</h2>
+          <h2>Join Concordia</h2>
           <p class="section-intro">
-            Every great tradition began as someone's half‑serious suggestion in a common room.
-            Supper club, book salon, chess tournament, stargazing on the quad—tell us what you’d
-            love to gather people for.
+            Add your name to the common-room list and we’ll keep you in the loop for suppers, walks,
+            parties, and calls for help moving sofas.
           </p>
-          <form id="event-idea-form">
+
+          <form id="club-signup-form">
             <div class="form-row">
-              <label for="idea-name">Name (optional)</label>
-              <input id="idea-name" name="name" type="text" />
+              <label for="signup-name">Name</label>
+              <input id="signup-name" name="name" type="text" required />
             </div>
             <div class="form-row">
-              <label for="idea-email">Email (optional)</label>
-              <input id="idea-email" name="email" type="email" />
+              <label for="signup-email">Email</label>
+              <input id="signup-email" name="email" type="email" required />
             </div>
             <div class="form-row">
-              <label for="idea-text">Your event idea</label>
-              <textarea id="idea-text" name="idea" required></textarea>
+              <label for="signup-year">Year of study (optional)</label>
+              <input id="signup-year" name="yearOfStudy" type="text" />
             </div>
-            <button type="submit">Submit Idea</button>
-            <p id="event-idea-message" class="form-message"></p>
+            <button type="submit">Join the society</button>
+            <p id="signup-message" class="form-message"></p>
           </form>
+
+          <hr class="join-divider" />
+
+          <h3>Contact</h3>
+          <p>
+            Questions, ideas, or long letters of opinion?<br />
+            Email us at
+            <a href="mailto:club@example.edu">club@example.edu</a>
+            or come find us in the common room.
+          </p>
+          <p><strong>Meeting place:</strong> Student Union, Room 210</p>
         </div>
       </section>
     </main>
@@ -77,3 +88,4 @@
     <script src="main.js"></script>
   </body>
 </html>
+

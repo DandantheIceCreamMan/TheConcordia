@@ -34,11 +34,11 @@ body {
   font-size: 1.0625rem;
   line-height: 1.7;
   color: var(--color-ink);
-  background-color: #1b1510;
+  background-color: var(--color-parchment);
   background-image:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.04), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.03), transparent 60%),
-    linear-gradient(135deg, #1b1510 0%, #201816 40%, #261d1a 100%);
+    radial-gradient(circle at top left, rgba(139, 115, 85, 0.18), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(139, 115, 85, 0.12), transparent 60%),
+    linear-gradient(135deg, #f6f2ea 0%, #efe6d8 40%, #e6ddcf 100%);
 }
 
 .container {
@@ -52,7 +52,10 @@ body {
 .site-header {
   background: radial-gradient(circle at 0 0, #2b2320 0%, #18131a 32%, #0f1419 100%);
   color: var(--color-ivory);
-  padding: var(--space-xl) 0;
+  padding: var(--space-lg) 0 var(--space-md);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .header-inner {
@@ -60,12 +63,39 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
   gap: 0.5rem;
+  position: relative;
 }
 
 .brand {
   flex: 0 0 auto;
+  min-width: 0;
+  text-align: center;
+}
+
+.header-actions {
+  position: fixed;
+  top: 1.1rem;
+  right: 1.5rem;
+  z-index: 1200;
+}
+
+.join-chip {
+  display: inline-block;
+  padding: 0.2rem 0.4rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-gold-light);
+  text-decoration: none;
+  border: none;
+  box-shadow: none;
+}
+
+.join-chip:hover {
+  text-decoration: underline;
+  color: var(--color-ivory);
 }
 
 .site-title {
@@ -241,6 +271,13 @@ h3 {
   color: var(--color-ivory);
   border-bottom-color: rgba(255, 255, 255, 0.3);
   margin-bottom: var(--space-lg);
+}
+
+.hero-title {
+  font-family: "Cinzel Decorative", var(--font-heading);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 1.9rem;
 }
 
 .hero-content p {

@@ -6,7 +6,7 @@
     <title>UATX Concordia – Home</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -29,10 +29,11 @@
           <a href="propose.html">Propose an Event</a>
           <a href="polls.html">Polls</a>
           <a href="newsletter.html">Newsletter</a>
-          <a href="index.html#join">Join & Contact</a>
         </nav>
+        <div class="header-actions">
+          <a href="join.html" class="join-chip">Join &amp; Contact</a>
+        </div>
       </div>
-    <div class="header-ornament" aria-hidden="true"></div>
     </header>
 
     <main>
@@ -41,16 +42,17 @@
         <div class="hero-ornament hero-ornament--top" aria-hidden="true"></div>
         <div class="hero-ornament hero-ornament--bottom" aria-hidden="true"></div>
         <div class="container hero-content">
-          <h2>The Concordia Common Room</h2>
+          <h2 class="hero-title">The Common Room</h2>
           <p>
-            Step into a warm, wood‑panelled common room where philosophers argue amiably over tea,
-            wizards debate the finer points of spellcraft, and someone is perpetually setting up a
-            game of pool in the corner.
+            At the centre of Concordia is a shared room that feels a little out of time: shelves of
+            books, mismatched armchairs, a pool table that sees more philosophy than competition,
+            and a table where someone is always making tea.
           </p>
           <p>
-            Concordia is the social heart of a small college: a society of walks to the museum,
-            suppers in borrowed gowns, reading parties, movie nights, and general mischief between
-            essays. Below you’ll find the kinds of evenings we host, and the many ways to take part.
+            This is where evenings unfold after classes—quiet reading hours, long conversations that
+            wander from Plato to politics, impromptu games, film nights, and plans for the next
+            outing into town. The society exists to make sure there is always somewhere to go, and
+            always someone to talk to, when the work of the day is finished.
           </p>
         </div>
       </section>
@@ -140,46 +142,11 @@
       </section>
     </main>
 
-    <footer class="join-footer" id="join">
-      <div class="join-footer-ornament" aria-hidden="true"></div>
+    <footer class="site-footer">
       <div class="container">
-        <h2 class="join-footer-title">
-          <span class="ornament-line ornament-line--gold"></span>
-          Join Concordia
-          <span class="ornament-line ornament-line--gold"></span>
-        </h2>
-        <div class="join-grid">
-          <div class="join-form">
-            <h3>Sign Up</h3>
-            <form id="club-signup-form">
-              <div class="form-row">
-                <label for="signup-name">Name</label>
-                <input id="signup-name" name="name" type="text" required />
-              </div>
-              <div class="form-row">
-                <label for="signup-email">Email</label>
-                <input id="signup-email" name="email" type="email" required />
-              </div>
-              <div class="form-row">
-                <label for="signup-year">Year of study (optional)</label>
-                <input id="signup-year" name="yearOfStudy" type="text" />
-              </div>
-              <button type="submit">Join the Club</button>
-              <p id="signup-message" class="form-message"></p>
-            </form>
-          </div>
-
-          <div class="join-info">
-            <h3>Founder & Contact</h3>
-            <p><strong>Founder:</strong> [Your Name]</p>
-            <p><strong>Email:</strong> <a href="mailto:club@example.edu">club@example.edu</a></p>
-            <p>
-              <strong>Meeting place:</strong> Student Union, Room 210
-            </p>
-          </div>
-        </div>
         <p class="copyright">
           &copy; <span id="year"></span> UATX Concordia
+          · <a href="index.html">Home</a> · <a href="join.html">Join &amp; Contact</a>
         </p>
       </div>
     </footer>
