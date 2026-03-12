@@ -1,4 +1,4 @@
-/* UATX Concordia – Liberal arts / Oxford-inspired theme, slightly modern */
+/* UATX Concordia – Austen x Hogwarts x Oxbridge common-room theme */
 
 :root {
   --color-ink: #1a1a1a;
@@ -34,7 +34,11 @@ body {
   font-size: 1.0625rem;
   line-height: 1.7;
   color: var(--color-ink);
-  background-color: var(--color-cream);
+  background-color: #1b1510;
+  background-image:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.04), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.03), transparent 60%),
+    linear-gradient(135deg, #1b1510 0%, #201816 40%, #261d1a 100%);
 }
 
 .container {
@@ -46,7 +50,7 @@ body {
 
 /* —— Header: generous spacing, clear hierarchy —— */
 .site-header {
-  background: var(--color-oxford);
+  background: radial-gradient(circle at 0 0, #2b2320 0%, #18131a 32%, #0f1419 100%);
   color: var(--color-ivory);
   padding: var(--space-xl) 0;
 }
