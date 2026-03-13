@@ -83,6 +83,76 @@ async function loadEvents() {
   }
 }
 
+async function loadFeaturedEvents() {
+  const container = document.getElementById("featured-events");
+  if (!container) return;
+
+  try {
+    const events = await fetchJSON("/api/events");
+    if (!events.length) {
+      container.innerHTML =
+        '<p class="featured-empty">No evenings on the board yet. Check back soon—or propose one.</p>';
+      return;
+    }
+
+    const upcoming = events.filter((event) => !isPastEvent(event));
+    const source = upcoming.length ? upcoming : events;
+    const featured = source.slice(0, 2);
+
+    const cardsHtml = featured
+      .map((event) => {
+        const timeText = event.time ? ` · ${event.time}` : "";
+        const capacityLine =
+          event.maxCapacity != null
+            ? `${event.rsvpCount}/${event.maxCapacity} spots`
+            : `${event.rsvpCount || 0} going`;
+        return `
+          <article class="featured-card">
+            <div class="featured-card-header">
+              <h3 class="featured-card-title">${event.title}</h3>
+              <p class="featured-card-meta">
+                <span>${event.date}${timeText}</span>
+                <span>${event.location}</span>
+              </p>
+            </div>
+            <p class="featured-card-body">${event.description}</p>
+            <p class="featured-card-capacity">${capacityLine}</p>
+            <div class="featured-card-actions">
+              <a href="event.html?id=${event.id}" class="btn btn-rsvp">Details & RSVP</a>
+              <button type="button" class="btn btn-share" data-event-id="${event.id}">Share</button>
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+
+    container.innerHTML = cardsHtml;
+
+    container.querySelectorAll(".btn-share").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-event-id");
+        const url = getEventShareUrl(id);
+        navigator.clipboard.writeText(url).then(
+          () => {
+            const label = btn.textContent;
+            btn.textContent = "Copied!";
+            setTimeout(() => {
+              btn.textContent = label;
+            }, 2000);
+          },
+          () => {
+            prompt("Copy this link:", url);
+          }
+        );
+      });
+    });
+  } catch (error) {
+    console.error("Failed to load featured events", error);
+    container.innerHTML =
+      '<p class="featured-empty">We couldn’t load this week’s evenings. Try refreshing the page.</p>';
+  }
+}
+
 function isPastEvent(event) {
   const eventDate = new Date(event.date);
   const today = new Date();
@@ -466,4 +536,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   else if (document.getElementById("events-list")) await loadEvents();
   if (document.getElementById("polls-container")) await loadPolls();
   if (document.getElementById("newsletter-list")) await loadNewsletters();
+  if (document.getElementById("featured-events")) await loadFeaturedEvents();
 });
