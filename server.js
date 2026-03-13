@@ -69,8 +69,18 @@ const newsletterSubscribers = [];
 const clubSignups = [];
 const stories = [];
 
-// Static frontend
-app.use(express.static(path.join(__dirname, "public")));
+// Static frontend: prefer React build if present, else legacy public/
+const clientBuild = path.join(__dirname, "client", "dist");
+const publicDir = path.join(__dirname, "public");
+if (require("fs").existsSync(clientBuild)) {
+  app.use(express.static(clientBuild));
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) return next();
+    res.sendFile(path.join(clientBuild, "index.html"));
+  });
+} else {
+  app.use(express.static(publicDir));
+}
 
 // Helper: event with RSVP counts for display
 function eventWithRsvpCount(event) {
