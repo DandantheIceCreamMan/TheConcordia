@@ -542,11 +542,21 @@ h3 {
 }
 
 .at-a-glance-item {
+  display: block;
   background: var(--color-parchment);
   border-radius: 10px;
   padding: var(--space-md);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  transition:
+    transform 0.16s ease-out,
+    box-shadow 0.16s ease-out,
+    border-color 0.16s ease-out,
+    background 0.16s ease-out;
+  cursor: pointer;
 }
 
 .at-a-glance-item h3 {
@@ -560,15 +570,23 @@ h3 {
   color: var(--color-ink-muted);
 }
 
-.at-a-glance-item a {
+.at-a-glance-cta {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-burgundy);
-  text-decoration: none;
   border-bottom: 1px solid rgba(92, 42, 46, 0.4);
 }
 
-.at-a-glance-item a:hover {
+.at-a-glance-item:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.16),
+    0 0 0 1px rgba(212, 168, 75, 0.28);
+  border-color: rgba(212, 168, 75, 0.4);
+  background: #f2ece0;
+}
+
+.at-a-glance-item:hover .at-a-glance-cta {
   color: var(--color-burgundy-hover);
   border-bottom-color: var(--color-burgundy-hover);
 }
