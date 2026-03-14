@@ -9,6 +9,7 @@ import Propose from './pages/Propose';
 import Polls from './pages/Polls';
 import Newsletter from './pages/Newsletter';
 import Join from './pages/Join';
+import Admin from './pages/Admin';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="polls" element={<Polls />} />
           <Route path="newsletter" element={<Newsletter />} />
           <Route path="join" element={<Join />} />
+          <Route path="admin" element={<Admin />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -8,6 +8,7 @@ export default function Footer() {
         <p className="copyright">
           &copy; {year} UATX Concordia
           · <Link to="/">Home</Link> · <Link to="/join">Join &amp; Contact</Link>
+          · <Link to="/admin">Admin</Link>
         </p>
       </div>
     </footer>

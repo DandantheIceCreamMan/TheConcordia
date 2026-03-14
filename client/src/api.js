@@ -6,6 +6,19 @@ export async function fetchJSON(url, options = {}) {
   return response.json();
 }
 
+/** Call API with admin Bearer token. Use for admin-only routes. */
+export async function adminFetch(url, options = {}, adminToken) {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+  return response;
+}
+
 export function getEventShareUrl(eventId) {
   const base = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') || window.location.origin;
   return `${base}/event/${eventId}`;
