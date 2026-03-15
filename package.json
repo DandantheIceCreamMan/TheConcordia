@@ -5,9 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "build:client": "cd client && npm run build",
+    "build-and-start": "npm run build:client && npm start",
     "dev": "nodemon server.js",
-    "dev:client": "cd client && npm run dev",
-    "build:client": "cd client && npm run build"
+    "dev:client": "cd client && npm run dev"
   },
   "keywords": [
     "social-club",

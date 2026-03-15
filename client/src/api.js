@@ -6,6 +6,23 @@ export async function fetchJSON(url, options = {}) {
   return response.json();
 }
 
+/** POST JSON and return { response, data }. Caller checks response.ok and parses data. */
+export async function postJSON(url, body, options = {}) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: typeof body === 'string' ? body : JSON.stringify(body),
+    ...options,
+  });
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    // non-JSON response (e.g. HTML error page)
+  }
+  return { response, data };
+}
+
 /** Call API with admin Bearer token. Use for admin-only routes. */
 export async function adminFetch(url, options = {}, adminToken) {
   const response = await fetch(url, {

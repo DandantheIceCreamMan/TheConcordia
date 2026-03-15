@@ -34,22 +34,25 @@ export default function Admin() {
   const loadAll = async () => {
     setLoading(true);
     try {
-      const [ev, po, nl, ideas, subs, signups, st] = await Promise.all([
-        fetchJSON('/api/events'),
-        adminFetch('/api/admin/polls', {}, token).then((r) => r.json()),
+      const [evRes, poRes, nl, ideasRes, subsRes, signupsRes, stRes] = await Promise.all([
+        fetch('/api/events').then((r) => r.json()),
+        adminFetch('/api/admin/polls', {}, token).then(async (r) => {
+          const data = await r.json();
+          return r.ok && Array.isArray(data) ? data : [];
+        }),
         fetchJSON('/api/newsletters'),
-        adminFetch('/api/admin/event-ideas', {}, token).then((r) => r.json()),
-        adminFetch('/api/admin/subscribers', {}, token).then((r) => r.json()),
-        adminFetch('/api/admin/club-signups', {}, token).then((r) => r.json()),
-        adminFetch('/api/admin/stories', {}, token).then((r) => r.json())
+        adminFetch('/api/admin/event-ideas', {}, token).then(async (r) => (r.ok ? r.json() : [])),
+        adminFetch('/api/admin/subscribers', {}, token).then(async (r) => (r.ok ? r.json() : [])),
+        adminFetch('/api/admin/club-signups', {}, token).then(async (r) => (r.ok ? r.json() : [])),
+        adminFetch('/api/admin/stories', {}, token).then(async (r) => (r.ok ? r.json() : []))
       ]);
-      setEvents(ev);
-      setPolls(po);
-      setNewsletters(nl);
-      setEventIdeas(ideas);
-      setSubscribers(subs);
-      setClubSignups(signups);
-      setStories(st);
+      setEvents(Array.isArray(evRes) ? evRes : []);
+      setPolls(Array.isArray(poRes) ? poRes : []);
+      setNewsletters(Array.isArray(nl) ? nl : []);
+      setEventIdeas(Array.isArray(ideasRes) ? ideasRes : []);
+      setSubscribers(Array.isArray(subsRes) ? subsRes : []);
+      setClubSignups(Array.isArray(signupsRes) ? signupsRes : []);
+      setStories(Array.isArray(stRes) ? stRes : []);
     } catch {
       setEvents([]);
       setPolls([]);
@@ -335,6 +338,25 @@ export default function Admin() {
     }
   };
 
+  const handleEndPoll = async (id) => {
+    try {
+      const res = await adminFetch(`/api/admin/polls/${id}/end`, { method: 'PATCH' }, token);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setPollStatus({ type: 'error', message: data.error || 'Failed to end poll.' });
+        return;
+      }
+      const data = await res.json();
+      setPolls((prev) => prev.map((p) => (p.id === id ? { ...p, closesAt: data.closesAt } : p)));
+      setPollStatus({ type: 'success', message: 'Poll ended. Voting is now closed.' });
+      if (editingPollId === id && editPollForm) {
+        setEditPollForm((f) => ({ ...f, closesAt: data.closesAt }));
+      }
+    } catch {
+      setPollStatus({ type: 'error', message: 'Could not end poll.' });
+    }
+  };
+
   const startEditPoll = (poll) => {
     setEditingPollId(poll.id);
     setEditPollForm({
@@ -544,20 +566,34 @@ export default function Admin() {
             <summary><h3>Polls</h3></summary>
             {polls.length > 0 && (
               <ul className="admin-event-list">
-                {polls.map((poll) => (
-                  <li key={poll.id} className="event-item admin-event-item">
-                    <div>
-                      <strong>{poll.question}</strong>
-                      {poll.options.map((o) => (
-                        <span key={o.id} className="admin-meta"> · {o.label} ({o.votes})</span>
-                      ))}
-                    </div>
-                    <div className="event-card-actions">
-                      <button type="button" className="btn btn-share" onClick={() => startEditPoll(poll)}>Edit</button>
-                      <button type="button" className="btn btn-rsvp" style={{ background: 'var(--color-ink-muted)' }} onClick={() => handleDeletePoll(poll.id)}>Delete</button>
-                    </div>
-                  </li>
-                ))}
+                {polls.map((poll) => {
+                  const totalVotes = poll.totalVotes ?? poll.options?.reduce((s, o) => s + (o.votes ?? 0), 0) ?? 0;
+                  const isClosed = poll.closesAt && new Date(poll.closesAt) < new Date();
+                  return (
+                    <li key={poll.id} className="event-item admin-event-item admin-poll-item">
+                      <div className="admin-poll-head">
+                        <strong>{poll.question}</strong>
+                        <span className="admin-poll-total">{totalVotes} vote{totalVotes !== 1 ? 's' : ''} total</span>
+                        {isClosed && <span className="admin-poll-closed">Closed</span>}
+                      </div>
+                      <ul className="admin-poll-results">
+                        {poll.options.map((o) => (
+                          <li key={o.id}>
+                            <span className="admin-poll-option-label">{o.label}</span>
+                            <span className="admin-poll-votes">{o.votes ?? 0} votes</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="event-card-actions">
+                        <button type="button" className="btn btn-share" onClick={() => startEditPoll(poll)}>Edit</button>
+                        {!isClosed && (
+                          <button type="button" className="btn btn-share" onClick={() => handleEndPoll(poll.id)}>End poll now</button>
+                        )}
+                        <button type="button" className="btn btn-rsvp" style={{ background: 'var(--color-ink-muted)' }} onClick={() => handleDeletePoll(poll.id)}>Delete</button>
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             )}
             {editingPollId && editPollForm && (
@@ -572,8 +608,8 @@ export default function Admin() {
                   <textarea value={editPollForm.description ?? ''} onChange={(e) => setEditPollForm((f) => ({ ...f, description: e.target.value }))} rows={2} placeholder="Extra context for voters" />
                 </div>
                 <div className="form-row">
-                  <label>Closes at (optional)</label>
-                  <input type="date" value={editPollForm.closesAt ?? ''} onChange={(e) => setEditPollForm((f) => ({ ...f, closesAt: e.target.value }))} />
+                  <label>Closes at (optional — date and time)</label>
+                  <input type="datetime-local" value={editPollForm.closesAt ? String(editPollForm.closesAt).slice(0, 16) : ''} onChange={(e) => setEditPollForm((f) => ({ ...f, closesAt: e.target.value || null }))} />
                 </div>
                 <div className="form-row">
                   <label>Options (one per line or comma-separated)</label>
@@ -597,8 +633,8 @@ export default function Admin() {
                 <textarea value={pollForm.description} onChange={(e) => setPollForm((f) => ({ ...f, description: e.target.value }))} rows={2} placeholder="Extra context for voters" />
               </div>
               <div className="form-row">
-                <label>Closes at (optional)</label>
-                <input type="date" value={pollForm.closesAt} onChange={(e) => setPollForm((f) => ({ ...f, closesAt: e.target.value }))} />
+                <label>Closes at (optional — date and time)</label>
+                <input type="datetime-local" value={pollForm.closesAt} onChange={(e) => setPollForm((f) => ({ ...f, closesAt: e.target.value }))} />
               </div>
               <div className="form-row">
                 <label>Options (one per line or comma-separated)</label>

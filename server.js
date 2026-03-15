@@ -203,14 +203,18 @@ app.post("/api/polls/:pollId/vote", (req, res) => {
     });
   }
 
-  const option = poll.options.find((o) => o.id === optionId);
+  const optionIdNum = Number(optionId);
+  if (Number.isNaN(optionIdNum)) {
+    return res.status(400).json({ error: "Invalid option." });
+  }
+  const option = poll.options.find((o) => o.id === optionIdNum);
   if (!option) {
     return res.status(400).json({ error: "Invalid option." });
   }
 
-  pollVotes[pollId][normalizedEmail] = optionId;
+  pollVotes[pollId][normalizedEmail] = optionIdNum;
   option.votes += 1;
-  res.json(publicPoll(poll, optionId));
+  res.json(publicPoll(poll, optionIdNum));
 });
 
 app.get("/api/newsletters", (req, res) => {
@@ -390,9 +394,27 @@ app.get('/api/admin/events/:id/rsvps', requireAdmin, (req, res) => {
   res.json(eventRsvps[id] || []);
 });
 
-// Admin: full polls (with vote counts)
+// Admin: full polls (with vote counts) – derive counts from pollVotes so they're always correct
 app.get('/api/admin/polls', requireAdmin, (req, res) => {
-  res.json(polls.map((p) => ({ ...p, options: [...p.options], totalVotes: p.options.reduce((s, o) => s + o.votes, 0) })));
+  const list = polls.map((p) => {
+    const votesByOption = {};
+    p.options.forEach((o) => { votesByOption[o.id] = 0; });
+    const votes = pollVotes[p.id] || {};
+    Object.values(votes).forEach((optionId) => {
+      if (votesByOption[optionId] !== undefined) votesByOption[optionId] += 1;
+    });
+    const totalVotes = Object.values(votesByOption).reduce((s, n) => s + n, 0);
+    const options = p.options.map((o) => ({ id: o.id, label: o.label, votes: votesByOption[o.id] || 0 }));
+    return {
+      id: p.id,
+      question: p.question,
+      description: p.description,
+      closesAt: p.closesAt,
+      options,
+      totalVotes
+    };
+  });
+  res.json(list);
 });
 
 // Admin: polls CRUD
@@ -433,6 +455,15 @@ app.put('/api/admin/polls/:id', requireAdmin, (req, res) => {
     if (poll.options.length < 2) return res.status(400).json({ error: 'At least two non-empty options required.' });
     pollVotes[id] = {};
   }
+  res.json(poll);
+});
+
+// End poll now (set closesAt to current time so voting is closed)
+app.patch('/api/admin/polls/:id/end', requireAdmin, (req, res) => {
+  const id = Number(req.params.id);
+  const poll = polls.find((p) => p.id === id);
+  if (!poll) return res.status(404).json({ error: 'Poll not found.' });
+  poll.closesAt = new Date().toISOString();
   res.json(poll);
 });
 
