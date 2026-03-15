@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
+const nodemailer = require("nodemailer");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -61,12 +62,15 @@ const polls = [
 // One vote per person per poll: pollId -> { normalizedEmail -> optionId }
 const pollVotes = { 1: {} };
 
+// Newsletter: { id, title, date, masthead?, sections: [ { heading, body } ] }
+// Legacy entries may have content instead of sections; normalized when read.
 const newsletters = [
   {
     id: 1,
     title: "March Newsletter",
     date: "2026-03-01",
-    content: "Welcome to the social club! This is where we'll share recaps and upcoming events."
+    masthead: null,
+    sections: [{ heading: "", body: "Welcome to the social club! This is where we'll share recaps and upcoming events." }]
   }
 ];
 
@@ -217,8 +221,21 @@ app.post("/api/polls/:pollId/vote", (req, res) => {
   res.json(publicPoll(poll, optionIdNum));
 });
 
+function normalizeNewsletter(n) {
+  const sections = n.sections && n.sections.length
+    ? n.sections.map((s) => ({ heading: String(s.heading ?? "").trim(), body: String(s.body ?? "").trim() }))
+    : [{ heading: "", body: String(n.content ?? "").trim() }];
+  return {
+    id: n.id,
+    title: n.title,
+    date: n.date,
+    masthead: n.masthead != null ? String(n.masthead).trim() : null,
+    sections
+  };
+}
+
 app.get("/api/newsletters", (req, res) => {
-  res.json(newsletters);
+  res.json(newsletters.map(normalizeNewsletter));
 });
 
 app.post("/api/newsletters/subscribe", (req, res) => {
@@ -315,31 +332,50 @@ app.delete('/api/admin/events/:id', requireAdmin, (req, res) => {
   res.status(204).send();
 });
 
-app.post('/api/admin/newsletters', requireAdmin, (req, res) => {
-  const { title, content } = req.body || {};
-  if (!title || !content) {
-    return res.status(400).json({ error: 'Title and content are required.' });
+function parseNewsletterBody(body) {
+  const { title, content, masthead, sections: rawSections, date } = body || {};
+  if (!title) return null;
+  let sections;
+  if (Array.isArray(rawSections) && rawSections.length > 0) {
+    sections = rawSections
+      .filter((s) => s && (String(s.heading ?? "").trim() || String(s.body ?? "").trim()))
+      .map((s) => ({ heading: String(s.heading ?? "").trim(), body: String(s.body ?? "").trim() }));
   }
-  const date = new Date().toISOString().slice(0, 10);
+  if (!sections || sections.length === 0) {
+    const single = String(content ?? "").trim();
+    if (!single) return null;
+    sections = [{ heading: "", body: single }];
+  }
+  return {
+    title: String(title).trim(),
+    date: date != null && String(date).trim() ? String(date).trim() : new Date().toISOString().slice(0, 10),
+    masthead: masthead != null && String(masthead).trim() ? String(masthead).trim() : null,
+    sections
+  };
+}
+
+app.post('/api/admin/newsletters', requireAdmin, (req, res) => {
+  const parsed = parseNewsletterBody(req.body);
+  if (!parsed) return res.status(400).json({ error: 'Title and at least one section (or content) are required.' });
   const newsletter = {
     id: newsletters.length ? Math.max(...newsletters.map((n) => n.id)) + 1 : 1,
-    title: String(title).trim(),
-    date,
-    content: String(content).trim()
+    ...parsed
   };
   newsletters.push(newsletter);
-  res.status(201).json(newsletter);
+  res.status(201).json(normalizeNewsletter(newsletter));
 });
 
 app.put('/api/admin/newsletters/:id', requireAdmin, (req, res) => {
   const id = Number(req.params.id);
   const n = newsletters.find((x) => x.id === id);
   if (!n) return res.status(404).json({ error: 'Newsletter not found.' });
-  const { title, content, date } = req.body || {};
-  if (title !== undefined) n.title = String(title).trim();
-  if (content !== undefined) n.content = String(content).trim();
-  if (date !== undefined) n.date = String(date).trim();
-  res.json(n);
+  const parsed = parseNewsletterBody(req.body);
+  if (!parsed) return res.status(400).json({ error: 'Title and at least one section (or content) are required.' });
+  n.title = parsed.title;
+  n.date = parsed.date;
+  n.masthead = parsed.masthead;
+  n.sections = parsed.sections;
+  res.json(normalizeNewsletter(n));
 });
 
 app.delete('/api/admin/newsletters/:id', requireAdmin, (req, res) => {
@@ -348,6 +384,84 @@ app.delete('/api/admin/newsletters/:id', requireAdmin, (req, res) => {
   if (idx === -1) return res.status(404).json({ error: 'Newsletter not found.' });
   newsletters.splice(idx, 1);
   res.status(204).send();
+});
+
+// Admin: send newsletter by email to all subscribers (requires SMTP env vars)
+function getMailTransporter() {
+  const host = process.env.SMTP_HOST;
+  const port = process.env.SMTP_PORT || 587;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const secure = process.env.SMTP_SECURE === "true" || process.env.SMTP_SECURE === "1";
+  if (!host || !user || !pass) return null;
+  return nodemailer.createTransport({ host, port, secure, auth: { user, pass } });
+}
+
+function newsletterToHtml(nl) {
+  const n = normalizeNewsletter(nl);
+  const mast = n.masthead ? `<div class="masthead">${escapeHtml(n.masthead)}</div>` : "";
+  const sections = n.sections
+    .map(
+      (s) =>
+        `<section>${s.heading ? `<h3>${escapeHtml(s.heading)}</h3>` : ""}<div class="body">${escapeHtml(s.body).replace(/\n/g, "<br>")}</div></section>`
+    )
+    .join("");
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><style>
+  body { font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 1rem; color: #1a1a1a; line-height: 1.6; }
+  .masthead { font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase; color: #5c2a2e; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.5rem; margin: 0 0 0.5rem; }
+  .date { color: #4a4a4a; font-size: 0.9rem; margin-bottom: 1rem; }
+  section { margin-bottom: 1.25rem; }
+  section h3 { font-size: 1.1rem; margin: 0 0 0.35rem; border-bottom: 1px solid #d4cfc4; padding-bottom: 0.25rem; }
+  .body { margin: 0; }
+</style></head>
+<body>
+${mast}
+<h2>${escapeHtml(n.title)}</h2>
+<p class="date">${escapeHtml(n.date)}</p>
+${sections}
+</body>
+</html>`;
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+app.post("/api/admin/newsletters/:id/send", requireAdmin, async (req, res) => {
+  const id = Number(req.params.id);
+  const newsletter = newsletters.find((n) => n.id === id);
+  if (!newsletter) return res.status(404).json({ error: "Newsletter not found." });
+  const transporter = getMailTransporter();
+  if (!transporter) {
+    return res.status(503).json({
+      error: "Email not configured. Set SMTP_HOST, SMTP_USER, and SMTP_PASS (and optionally SMTP_PORT, SMTP_SECURE, MAIL_FROM) in the environment."
+    });
+  }
+  const emails = newsletterSubscribers.map((s) => s.email).filter(Boolean);
+  if (emails.length === 0) {
+    return res.status(400).json({ error: "No subscribers to send to." });
+  }
+  const from = process.env.MAIL_FROM || process.env.SMTP_USER;
+  const html = newsletterToHtml(newsletter);
+  try {
+    await transporter.sendMail({
+      from: `"UATX Concordia" <${from}>`,
+      to: emails,
+      subject: newsletter.title,
+      html
+    });
+    res.json({ sent: emails.length, message: `Newsletter sent to ${emails.length} subscriber(s).` });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to send email.", details: err.message });
+  }
 });
 
 // Admin: list event ideas

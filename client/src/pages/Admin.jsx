@@ -19,7 +19,7 @@ export default function Admin() {
     title: '', date: '', time: '', location: '', description: '', maxCapacity: ''
   });
   const [eventSubmitStatus, setEventSubmitStatus] = useState({ type: '', message: '' });
-  const [newsletterForm, setNewsletterForm] = useState({ title: '', content: '' });
+  const [newsletterForm, setNewsletterForm] = useState({ title: '', date: '', masthead: '', sections: [{ heading: '', body: '' }] });
   const [newsletterStatus, setNewsletterStatus] = useState({ type: '', message: '' });
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
@@ -192,13 +192,43 @@ export default function Admin() {
     });
   };
 
+  const addNewsletterSection = (isEdit = false) => {
+    if (isEdit && editNewsletterForm) {
+      setEditNewsletterForm((f) => ({ ...f, sections: [...(f.sections || []), { heading: '', body: '' }] }));
+    } else {
+      setNewsletterForm((f) => ({ ...f, sections: [...f.sections, { heading: '', body: '' }] }));
+    }
+  };
+
+  const removeNewsletterSection = (index, isEdit = false) => {
+    if (isEdit && editNewsletterForm) {
+      const sections = editNewsletterForm.sections.filter((_, i) => i !== index);
+      if (sections.length < 1) return;
+      setEditNewsletterForm((f) => ({ ...f, sections }));
+    } else {
+      const sections = newsletterForm.sections.filter((_, i) => i !== index);
+      if (sections.length < 1) return;
+      setNewsletterForm((f) => ({ ...f, sections }));
+    }
+  };
+
   const handleAddNewsletter = async (e) => {
     e.preventDefault();
     setNewsletterStatus({ type: '', message: '' });
+    const sections = newsletterForm.sections.filter((s) => String(s.body || '').trim());
+    if (sections.length === 0) {
+      setNewsletterStatus({ type: 'error', message: 'Add at least one section with content.' });
+      return;
+    }
     try {
       const res = await adminFetch('/api/admin/newsletters', {
         method: 'POST',
-        body: JSON.stringify({ title: newsletterForm.title, content: newsletterForm.content })
+        body: JSON.stringify({
+          title: newsletterForm.title.trim(),
+          date: newsletterForm.date || undefined,
+          masthead: newsletterForm.masthead.trim() || undefined,
+          sections: sections.map((s) => ({ heading: (s.heading || '').trim(), body: (s.body || '').trim() }))
+        })
       }, token);
       const data = await res.json();
       if (!res.ok) {
@@ -206,7 +236,7 @@ export default function Admin() {
         return;
       }
       setNewsletters((prev) => [...prev, data]);
-      setNewsletterForm({ title: '', content: '' });
+      setNewsletterForm({ title: '', date: '', masthead: '', sections: [{ heading: '', body: '' }] });
       setNewsletterStatus({ type: 'success', message: `Newsletter "${data.title}" published.` });
     } catch {
       setNewsletterStatus({ type: 'error', message: 'Could not add newsletter.' });
@@ -216,10 +246,20 @@ export default function Admin() {
   const handleUpdateNewsletter = async (e) => {
     e.preventDefault();
     if (!editingNewsletterId || !editNewsletterForm) return;
+    const sections = (editNewsletterForm.sections || []).filter((s) => String(s.body || '').trim());
+    if (sections.length === 0) {
+      setNewsletterStatus({ type: 'error', message: 'Add at least one section with content.' });
+      return;
+    }
     try {
       const res = await adminFetch(`/api/admin/newsletters/${editingNewsletterId}`, {
         method: 'PUT',
-        body: JSON.stringify(editNewsletterForm)
+        body: JSON.stringify({
+          title: editNewsletterForm.title.trim(),
+          date: editNewsletterForm.date || undefined,
+          masthead: (editNewsletterForm.masthead || '').trim() || undefined,
+          sections: sections.map((s) => ({ heading: (s.heading || '').trim(), body: (s.body || '').trim() }))
+        })
       }, token);
       const data = await res.json();
       if (!res.ok) {
@@ -232,6 +272,25 @@ export default function Admin() {
       setNewsletterStatus({ type: 'success', message: 'Newsletter updated.' });
     } catch {
       setNewsletterStatus({ type: 'error', message: 'Could not update newsletter.' });
+    }
+  };
+
+  const [sendingNewsletterId, setSendingNewsletterId] = useState(null);
+  const handleSendNewsletter = async (id) => {
+    setNewsletterStatus({ type: '', message: '' });
+    setSendingNewsletterId(id);
+    try {
+      const res = await adminFetch(`/api/admin/newsletters/${id}/send`, { method: 'POST' }, token);
+      const data = await res.json();
+      if (!res.ok) {
+        setNewsletterStatus({ type: 'error', message: data.error || (data.details || 'Failed to send.') });
+        return;
+      }
+      setNewsletterStatus({ type: 'success', message: data.message || `Sent to ${data.sent} subscriber(s).` });
+    } catch {
+      setNewsletterStatus({ type: 'error', message: 'Could not send newsletter.' });
+    } finally {
+      setSendingNewsletterId(null);
     }
   };
 
@@ -649,13 +708,15 @@ export default function Admin() {
 
           <details className="admin-block">
             <summary><h3>Newsletters</h3></summary>
+            <p className="section-intro">Subscribers ({subscribers.length}) receive the newsletter when you click &quot;Send to subscribers&quot;. Manage who can subscribe on the public Newsletter page.</p>
             {newsletters.length > 0 && (
               <ul className="admin-event-list">
                 {newsletters.map((n) => (
                   <li key={n.id} className="event-item admin-event-item">
-                    <div><strong>{n.title}</strong> — {n.date}</div>
+                    <div><strong>{n.title}</strong> — {n.date}{n.masthead && ` · ${n.masthead}`}</div>
                     <div className="event-card-actions">
-                      <button type="button" className="btn btn-share" onClick={() => { setEditingNewsletterId(n.id); setEditNewsletterForm({ title: n.title, content: n.content, date: n.date }); }}>Edit</button>
+                      <button type="button" className="btn btn-share" onClick={() => { setEditingNewsletterId(n.id); setEditNewsletterForm({ title: n.title, date: n.date || '', masthead: n.masthead || '', sections: (n.sections && n.sections.length) ? n.sections.map((s) => ({ heading: s.heading || '', body: s.body || '' })) : [{ heading: '', body: '' }] }); }}>Edit</button>
+                      <button type="button" className="btn btn-rsvp" onClick={() => handleSendNewsletter(n.id)} disabled={sendingNewsletterId != null}>{(sendingNewsletterId === n.id) ? 'Sending…' : 'Send to subscribers'}</button>
                       <button type="button" className="btn btn-rsvp" style={{ background: 'var(--color-ink-muted)' }} onClick={() => handleDeleteNewsletter(n.id)}>Delete</button>
                     </div>
                   </li>
@@ -666,16 +727,27 @@ export default function Admin() {
               <form onSubmit={handleUpdateNewsletter} className="admin-form">
                 <h4>Edit newsletter</h4>
                 <div className="form-row">
+                  <label>Masthead (optional, e.g. &quot;The Concordia Chronicle&quot;)</label>
+                  <input value={editNewsletterForm.masthead ?? ''} onChange={(e) => setEditNewsletterForm((f) => ({ ...f, masthead: e.target.value }))} placeholder="The Concordia Chronicle" />
+                </div>
+                <div className="form-row">
                   <label>Title</label>
                   <input value={editNewsletterForm.title} onChange={(e) => setEditNewsletterForm((f) => ({ ...f, title: e.target.value }))} required />
                 </div>
                 <div className="form-row">
                   <label>Date</label>
-                  <input type="date" value={editNewsletterForm.date} onChange={(e) => setEditNewsletterForm((f) => ({ ...f, date: e.target.value }))} />
+                  <input type="date" value={editNewsletterForm.date ?? ''} onChange={(e) => setEditNewsletterForm((f) => ({ ...f, date: e.target.value }))} />
                 </div>
                 <div className="form-row">
-                  <label>Content</label>
-                  <textarea value={editNewsletterForm.content} onChange={(e) => setEditNewsletterForm((f) => ({ ...f, content: e.target.value }))} rows={6} required />
+                  <label>Sections</label>
+                  {(editNewsletterForm.sections || []).map((sec, idx) => (
+                    <div key={idx} className="admin-newsletter-section">
+                      <input type="text" value={sec.heading ?? ''} onChange={(e) => setEditNewsletterForm((f) => ({ ...f, sections: f.sections.map((s, i) => i === idx ? { ...s, heading: e.target.value } : s) }))} placeholder="Section heading (optional)" />
+                      <textarea value={sec.body ?? ''} onChange={(e) => setEditNewsletterForm((f) => ({ ...f, sections: f.sections.map((s, i) => i === idx ? { ...s, body: e.target.value } : s) }))} rows={3} placeholder="Section body" required />
+                      <button type="button" className="btn btn-share" onClick={() => removeNewsletterSection(idx, true)}>Remove section</button>
+                    </div>
+                  ))}
+                  <button type="button" className="btn btn-share" onClick={() => addNewsletterSection(true)}>Add section</button>
                 </div>
                 <div className="event-card-actions">
                   <button type="submit" className="btn btn-rsvp">Save</button>
@@ -686,12 +758,27 @@ export default function Admin() {
             <form onSubmit={handleAddNewsletter} className="admin-form">
               <h4>Publish new newsletter</h4>
               <div className="form-row">
+                <label>Masthead (optional)</label>
+                <input value={newsletterForm.masthead} onChange={(e) => setNewsletterForm((f) => ({ ...f, masthead: e.target.value }))} placeholder="The Concordia Chronicle" />
+              </div>
+              <div className="form-row">
                 <label>Title</label>
                 <input value={newsletterForm.title} onChange={(e) => setNewsletterForm((f) => ({ ...f, title: e.target.value }))} required />
               </div>
               <div className="form-row">
-                <label>Content</label>
-                <textarea value={newsletterForm.content} onChange={(e) => setNewsletterForm((f) => ({ ...f, content: e.target.value }))} rows={6} required />
+                <label>Date</label>
+                <input type="date" value={newsletterForm.date} onChange={(e) => setNewsletterForm((f) => ({ ...f, date: e.target.value }))} />
+              </div>
+              <div className="form-row">
+                <label>Sections</label>
+                {newsletterForm.sections.map((sec, idx) => (
+                  <div key={idx} className="admin-newsletter-section">
+                    <input type="text" value={sec.heading} onChange={(e) => setNewsletterForm((f) => ({ ...f, sections: f.sections.map((s, i) => i === idx ? { ...s, heading: e.target.value } : s) }))} placeholder="Section heading (optional)" />
+                    <textarea value={sec.body} onChange={(e) => setNewsletterForm((f) => ({ ...f, sections: f.sections.map((s, i) => i === idx ? { ...s, body: e.target.value } : s) }))} rows={3} placeholder="Section body" required />
+                    <button type="button" className="btn btn-share" onClick={() => removeNewsletterSection(idx, false)}>Remove section</button>
+                  </div>
+                ))}
+                <button type="button" className="btn btn-share" onClick={() => addNewsletterSection(false)}>Add section</button>
               </div>
               <button type="submit" className="btn btn-rsvp">Publish</button>
               {newsletterStatus.message && (

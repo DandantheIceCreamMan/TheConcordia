@@ -29,3 +29,16 @@ The **Vite dev server** is only for development. It gives you instant refresh wh
 - Terminal 2: `npm run dev:client` (Vite; open http://localhost:5173 and use that while coding)
 
 You can ignore this and always use **build + npm start** if you prefer.
+
+### Sending newsletters by email
+
+To send a published newsletter to all subscribers from the admin **Send to subscribers** button, set SMTP environment variables and restart the server:
+
+- `SMTP_HOST` — e.g. `smtp.gmail.com` or your provider’s host
+- `SMTP_PORT` — usually `587` (or `465` for SSL)
+- `SMTP_USER` — your SMTP username/email
+- `SMTP_PASS` — your SMTP password or app password
+- `SMTP_SECURE` — set to `true` or `1` for port 465
+- `MAIL_FROM` (optional) — from address; defaults to `SMTP_USER`
+
+If these are not set, the button will report that email is not configured.
