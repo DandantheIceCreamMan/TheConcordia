@@ -19,6 +19,7 @@ export default function Newsletter() {
   const [storyMessage, setStoryMessage] = useState('');
   const [submittingSub, setSubmittingSub] = useState(false);
   const [submittingStory, setSubmittingStory] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,6 +79,8 @@ export default function Newsletter() {
     }
   };
 
+  const latest = !loading && !error && newsletters.length > 0 ? newsletters[0] : null;
+
   return (
     <div className="page-main newsletter-page">
       <section className="section">
@@ -93,44 +96,28 @@ export default function Newsletter() {
             <div className="newsletter-main-column">
               <div className="chronicle-archive">
                 <h2 className="chronicle-archive-title">Latest edition</h2>
-                {loading && <p className="chronicle-loading">Loading editions…</p>}
+                {loading && <p className="chronicle-loading">Loading edition…</p>}
                 {error && <p className="chronicle-error">Failed to load newsletters.</p>}
-                {!loading && !error && newsletters.length === 0 && (
+                {!loading && !error && !latest && (
                   <p className="chronicle-empty">No editions published yet. Check back after the next meeting.</p>
                 )}
-                {!loading && !error && newsletters.length > 0 && (
-                  (() => {
-                    const current = newsletters[0];
-                    if (!current) return null;
-                    return (
-                      <article
-                        className="chronicle-edition chronicle-edition--full"
-                        aria-label={current.title}
-                      >
-                        <div className="chronicle-edition-inner">
-                          {current.masthead && (
-                            <div className="chronicle-masthead" aria-hidden>{current.masthead}</div>
-                          )}
-                          <h3 className="chronicle-headline">{current.title}</h3>
-                          <p className="chronicle-date">{formatNewsletterDate(current.date)}</p>
-                          <div className="chronicle-sections">
-                            {(current.sections || []).map((sec, idx) => (
-                              <section key={idx} className="chronicle-section">
-                                {sec.heading && (
-                                  <h4 className="chronicle-section-head">{sec.heading}</h4>
-                                )}
-                                <div className="chronicle-section-body">
-                                  {sec.body.split(/\n/).map((para, i) => (
-                                    para.trim() ? <p key={i}>{para}</p> : null
-                                  ))}
-                                </div>
-                              </section>
-                            ))}
-                          </div>
-                        </div>
-                      </article>
-                    );
-                  })()
+                {latest && (
+                  <button
+                    type="button"
+                    className="chronicle-teaser"
+                    onClick={() => setIsOpen(true)}
+                  >
+                    <div className="chronicle-teaser-inner">
+                      {latest.masthead && (
+                        <div className="chronicle-masthead" aria-hidden>{latest.masthead}</div>
+                      )}
+                      <h3 className="chronicle-headline">{latest.title}</h3>
+                      <p className="chronicle-date">{formatNewsletterDate(latest.date)}</p>
+                      <p className="chronicle-teaser-copy">
+                        Open this term&apos;s Chronicle to read the full dispatch.
+                      </p>
+                    </div>
+                  </button>
                 )}
               </div>
 
@@ -175,7 +162,43 @@ export default function Newsletter() {
               </form>
             </aside>
           </div>
-
+          {isOpen && latest && (
+            <div className="newsletter-modal" role="dialog" aria-modal="true" aria-label={latest.title}>
+              <div className="newsletter-modal-backdrop" onClick={() => setIsOpen(false)} />
+              <div className="newsletter-modal-content">
+                <button
+                  type="button"
+                  className="newsletter-modal-close"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Close
+                </button>
+                <article className="chronicle-edition chronicle-edition--full">
+                  <div className="chronicle-edition-inner">
+                    {latest.masthead && (
+                      <div className="chronicle-masthead" aria-hidden>{latest.masthead}</div>
+                    )}
+                    <h3 className="chronicle-headline">{latest.title}</h3>
+                    <p className="chronicle-date">{formatNewsletterDate(latest.date)}</p>
+                    <div className="chronicle-sections">
+                      {(latest.sections || []).map((sec, idx) => (
+                        <section key={idx} className="chronicle-section">
+                          {sec.heading && (
+                            <h4 className="chronicle-section-head">{sec.heading}</h4>
+                          )}
+                          <div className="chronicle-section-body">
+                            {sec.body.split(/\n/).map((para, i) => (
+                              para.trim() ? <p key={i}>{para}</p> : null
+                            ))}
+                          </div>
+                        </section>
+                      ))}
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
