@@ -162,9 +162,8 @@ export default function Home() {
             <span className="ornament-line ornament-line--short" />
           </h2>
           <p>
-            Concordia exists to make a small campus feel like a well‑loved common room: familiar,
-            thoughtful, a little chaotic, and never short of company. We believe that belonging is
-            built in the in‑between hours—after tutorials, between rehearsals, before essays are due.
+            Concordia exists to make it easy to gather after class: thoughtful, small‑scale evenings
+            that are simple to join, well‑planned, and never short of good company.
           </p>
           <p>
             We host evenings where you can argue about books and ideas, learn a new game,

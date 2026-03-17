@@ -510,7 +510,10 @@ h3 {
 
 .mission p {
   max-width: 42em;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: var(--space-md);
+  text-align: center;
 }
 .mission p:last-child {
   margin-bottom: 0;
@@ -605,6 +608,17 @@ h3 {
   max-width: none;
   margin-left: 0;
   margin-right: 0;
+}
+
+.section--featured #featured-heading {
+  text-align: center;
+}
+
+.section--featured .section-intro {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 .featured-events {

@@ -18,8 +18,7 @@ const events = [
     time: "6:00 PM",
     location: "Student Union Hall",
     description: "Kick-off event to meet other members of the social club.",
-    maxCapacity: null,
-    imageUrl: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1600&q=80"
+    maxCapacity: null
   },
   {
     id: 2,
@@ -28,8 +27,7 @@ const events = [
     time: "7:00 PM",
     location: "Campus residences (details after RSVP)",
     description: "A multi-course dinner that moves from one host to the next. Limited spots.",
-    maxCapacity: 20,
-    imageUrl: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1600&q=80"
+    maxCapacity: 20
   },
   {
     id: 3,
@@ -38,8 +36,7 @@ const events = [
     time: "5:00 PM",
     location: "Student Lounge",
     description: "Casual mixer with music, snacks, and room to wander between conversations.",
-    maxCapacity: null,
-    imageUrl: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80"
+    maxCapacity: null
   }
 ];
 
