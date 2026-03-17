@@ -26,7 +26,15 @@ export default function Newsletter() {
     let cancelled = false;
     fetchJSON('/api/newsletters')
       .then((data) => {
-        if (!cancelled) setNewsletters(Array.isArray(data) ? data : []);
+        if (cancelled) return;
+        const list = Array.isArray(data) ? data : [];
+        const sorted = [...list].sort((a, b) => {
+          const da = a.date ? new Date(a.date).getTime() : 0;
+          const db = b.date ? new Date(b.date).getTime() : 0;
+          if (db !== da) return db - da;
+          return (b.id ?? 0) - (a.id ?? 0);
+        });
+        setNewsletters(sorted);
       })
       .catch(() => {
         if (!cancelled) setError(true);
