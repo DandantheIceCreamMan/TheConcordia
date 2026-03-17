@@ -121,9 +121,9 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-// Static frontend: prefer React build if present, else legacy public/
+// Static frontend: serve React build (client/dist) and fall back to index.html for SPA routes.
+// If the build is missing, log a clear warning so deployment issues are obvious.
 const clientBuild = path.join(__dirname, "client", "dist");
-const publicDir = path.join(__dirname, "public");
 if (require("fs").existsSync(clientBuild)) {
   app.use(express.static(clientBuild));
   app.get("*", (req, res, next) => {
@@ -131,7 +131,11 @@ if (require("fs").existsSync(clientBuild)) {
     res.sendFile(path.join(clientBuild, "index.html"));
   });
 } else {
-  app.use(express.static(publicDir));
+  console.warn(
+    "[startup] React build directory client/dist was not found. " +
+      "Run `npm run build:client` before starting the server, and configure your host " +
+      "to run the build step in production."
+  );
 }
 
 // Helper: event with RSVP counts for display

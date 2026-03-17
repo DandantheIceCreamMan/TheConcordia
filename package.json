@@ -4,9 +4,9 @@
   "description": "School social events club website (backend + frontend skeleton)",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "build:client": "cd client && npm run build",
-    "build-and-start": "npm run build:client && npm start",
+    "start": "npm run build:client && node server.js",
+    "build:client": "cd client && npm install && npm run build",
+    "build-and-start": "npm run start",
     "dev": "nodemon server.js",
     "dev:client": "cd client && npm run dev"
   },
