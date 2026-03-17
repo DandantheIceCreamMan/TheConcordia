@@ -1438,14 +1438,14 @@ button:disabled {
   border: 2px solid var(--color-border);
   border-radius: 8px;
   padding: var(--space-md);
-  background: var(--color-ivory);
+  background: linear-gradient(135deg, rgba(253, 252, 250, 0.98), rgba(246, 244, 239, 0.98));
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease, background 0.2s ease;
 }
 
 .chronicle-teaser:hover {
-  border-color: var(--color-burgundy);
+  border-color: rgba(92, 42, 46, 0.35);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transform: translateY(-1px);
 }
@@ -1614,17 +1614,18 @@ button:disabled {
   position: absolute;
   top: 0.5rem;
   right: 0.75rem;
-  background: rgba(0, 0, 0, 0.4);
-  color: #fff;
+  background: var(--color-ivory);
+  color: var(--color-ink);
   border: none;
   border-radius: 999px;
   padding: 0.3rem 0.7rem;
   font-size: 0.85rem;
   cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
 .newsletter-modal-close:hover {
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--color-parchment);
 }
 
 .form-message--story {

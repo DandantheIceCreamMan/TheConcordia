@@ -67,10 +67,41 @@ const pollVotes = { 1: {} };
 const newsletters = [
   {
     id: 1,
-    title: "March Newsletter",
+    title: "Early Spring Dispatch",
     date: "2026-03-01",
-    masthead: null,
-    sections: [{ heading: "", body: "Welcome to the social club! This is where we'll share recaps and upcoming events." }]
+    masthead: "The Concordia Chronicle",
+    sections: [
+      {
+        heading: "From the common room fire",
+        body:
+`Welcome back to the common room. The chess set is missing one knight, the biscuit tin has somehow refilled itself again, and there are three different sign‑up sheets fighting for space on the mantle.
+
+This term we are trying an experiment: fewer announcements scattered across group chats, more things written down properly in one place. Think of this as the notice board in newspaper form.`
+      },
+      {
+        heading: "What actually happened last month",
+        body:
+`Game Night turned into a four‑hour tournament of Catan, Fleet, and increasingly dramatic charades when the card decks went missing. We discovered at least two secret card sharks and one person who can mime an entire Russian novel in under a minute.
+
+The Progressive Supper wandered from the student kitchens through the quad and somehow finished with hot chocolate in the library stairwell. Nobody is entirely sure who first decided the third course should be eaten on the steps, but the consensus is that it should happen again.`
+      },
+      {
+        heading: "Coming up on the notice board",
+        body:
+`• Debate & Dessert: a low‑stakes evening of arguing about questions that do not belong on exams (\"Is the common room more like a ship or a village?\"). Expect cake; bring an opinion.
+• Night at the Museum: a small group trip downtown for the Thursday late‑opening, followed by coffee and debrief.
+• Quiet Reading Hour: one hour, no phones, no small talk, just books and the occasional turning of pages.
+
+RSVPs for each of these will appear on the Events page as they are confirmed. If you have an idea you would actually show up to, the Propose form is very much open.`
+      },
+      {
+        heading: "How to be in the loop",
+        body:
+`If you are reading this on the website rather than in your inbox, you can add yourself to the newsletter list in the sidebar. We send only when there is something worth saying; no daily spam, no inspirational quotes, and absolutely no \"unsubscribe to confirm you are still interested\" emails.
+
+If you have a short story from a past evening—something funny, something unexpectedly good, or simply something you would like remembered—you can send it in from the bottom of this page. We may tuck a few of them into the next Chronicle.`
+      }
+    ]
   }
 ];
 
