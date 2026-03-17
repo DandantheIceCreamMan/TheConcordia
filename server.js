@@ -18,7 +18,8 @@ const events = [
     time: "6:00 PM",
     location: "Student Union Hall",
     description: "Kick-off event to meet other members of the social club.",
-    maxCapacity: null
+    maxCapacity: null,
+    imageUrl: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1600&q=80"
   },
   {
     id: 2,
@@ -27,16 +28,18 @@ const events = [
     time: "7:00 PM",
     location: "Campus residences (details after RSVP)",
     description: "A multi-course dinner that moves from one host to the next. Limited spots.",
-    maxCapacity: 20
+    maxCapacity: 20,
+    imageUrl: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1600&q=80"
   },
   {
     id: 3,
     title: "Spring Mixer",
-    date: "2026-02-14",
+    date: "2026-04-20",
     time: "5:00 PM",
     location: "Student Lounge",
-    description: "A past event: casual mixer with snacks and music.",
-    maxCapacity: null
+    description: "Casual mixer with music, snacks, and room to wander between conversations.",
+    maxCapacity: null,
+    imageUrl: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80"
   }
 ];
 
@@ -321,7 +324,7 @@ app.get('/api/admin/check', requireAdmin, (req, res) => {
 });
 
 app.post('/api/admin/events', requireAdmin, (req, res) => {
-  const { title, date, time, location, description, maxCapacity } = req.body || {};
+  const { title, date, time, location, description, maxCapacity, imageUrl } = req.body || {};
   if (!title || !date || !location || !description) {
     return res.status(400).json({ error: 'Title, date, location, and description are required.' });
   }
@@ -333,7 +336,8 @@ app.post('/api/admin/events', requireAdmin, (req, res) => {
     time: time ? String(time).trim() : null,
     location: String(location).trim(),
     description: String(description).trim(),
-    maxCapacity: maxCapacity != null && maxCapacity !== '' ? Number(maxCapacity) : null
+    maxCapacity: maxCapacity != null && maxCapacity !== '' ? Number(maxCapacity) : null,
+    imageUrl: imageUrl != null && String(imageUrl).trim() !== '' ? String(imageUrl).trim() : null
   };
   events.push(event);
   eventRsvps[id] = [];
@@ -344,13 +348,16 @@ app.put('/api/admin/events/:id', requireAdmin, (req, res) => {
   const id = Number(req.params.id);
   const event = events.find((e) => e.id === id);
   if (!event) return res.status(404).json({ error: 'Event not found.' });
-  const { title, date, time, location, description, maxCapacity } = req.body || {};
+  const { title, date, time, location, description, maxCapacity, imageUrl } = req.body || {};
   if (title !== undefined) event.title = String(title).trim();
   if (date !== undefined) event.date = String(date).trim();
   if (time !== undefined) event.time = time ? String(time).trim() : null;
   if (location !== undefined) event.location = String(location).trim();
   if (description !== undefined) event.description = String(description).trim();
   if (maxCapacity !== undefined) event.maxCapacity = maxCapacity != null && maxCapacity !== '' ? Number(maxCapacity) : null;
+  if (imageUrl !== undefined) {
+    event.imageUrl = imageUrl != null && String(imageUrl).trim() !== '' ? String(imageUrl).trim() : null;
+  }
   res.json(eventWithRsvpCount(event));
 });
 

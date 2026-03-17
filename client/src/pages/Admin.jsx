@@ -16,7 +16,7 @@ export default function Admin() {
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [eventForm, setEventForm] = useState({
-    title: '', date: '', time: '', location: '', description: '', maxCapacity: ''
+    title: '', date: '', time: '', location: '', description: '', maxCapacity: '', imageUrl: ''
   });
   const [eventSubmitStatus, setEventSubmitStatus] = useState({ type: '', message: '' });
   const [newsletterForm, setNewsletterForm] = useState({ title: '', date: '', masthead: '', sections: [{ heading: '', body: '' }] });
@@ -114,7 +114,8 @@ export default function Admin() {
           time: eventForm.time || undefined,
           location: eventForm.location,
           description: eventForm.description,
-          maxCapacity: eventForm.maxCapacity === '' ? null : Number(eventForm.maxCapacity)
+          maxCapacity: eventForm.maxCapacity === '' ? null : Number(eventForm.maxCapacity),
+          imageUrl: eventForm.imageUrl || undefined
         })
       }, token);
       const data = await res.json();
@@ -123,7 +124,7 @@ export default function Admin() {
         return;
       }
       setEvents((prev) => [...prev, data]);
-      setEventForm({ title: '', date: '', time: '', location: '', description: '', maxCapacity: '' });
+      setEventForm({ title: '', date: '', time: '', location: '', description: '', maxCapacity: '', imageUrl: '' });
       setEventSubmitStatus({ type: 'success', message: 'Event added.' });
     } catch {
       setEventSubmitStatus({ type: 'error', message: 'Could not add event.' });
@@ -143,7 +144,8 @@ export default function Admin() {
           time: editForm.time || undefined,
           location: editForm.location,
           description: editForm.description,
-          maxCapacity: editForm.maxCapacity === '' ? null : Number(editForm.maxCapacity)
+          maxCapacity: editForm.maxCapacity === '' ? null : Number(editForm.maxCapacity),
+          imageUrl: editForm.imageUrl || undefined
         })
       }, token);
       const data = await res.json();
@@ -189,7 +191,8 @@ export default function Admin() {
       time: event.time || '',
       location: event.location,
       description: event.description,
-      maxCapacity: event.maxCapacity != null ? String(event.maxCapacity) : ''
+      maxCapacity: event.maxCapacity != null ? String(event.maxCapacity) : '',
+      imageUrl: event.imageUrl || ''
     });
   };
 
@@ -583,6 +586,10 @@ export default function Admin() {
                   <label>Max capacity (optional)</label>
                   <input type="number" min="1" value={editForm.maxCapacity} onChange={(e) => setEditForm((f) => ({ ...f, maxCapacity: e.target.value }))} placeholder="Leave blank for no limit" />
                 </div>
+                <div className="form-row">
+                  <label>Image URL (optional)</label>
+                  <input value={editForm.imageUrl} onChange={(e) => setEditForm((f) => ({ ...f, imageUrl: e.target.value }))} placeholder="Paste a full image URL for the homepage banner" />
+                </div>
                 <div className="event-card-actions">
                   <button type="submit" className="btn btn-rsvp">Save</button>
                   <button type="button" className="btn btn-share" onClick={() => { setEditingId(null); setEditForm(null); }}>Cancel</button>
@@ -614,6 +621,10 @@ export default function Admin() {
               <div className="form-row">
                 <label>Max capacity (optional)</label>
                 <input type="number" min="1" value={eventForm.maxCapacity} onChange={(e) => setEventForm((f) => ({ ...f, maxCapacity: e.target.value }))} placeholder="Leave blank for no limit" />
+              </div>
+              <div className="form-row">
+                <label>Image URL (optional)</label>
+                <input value={eventForm.imageUrl} onChange={(e) => setEventForm((f) => ({ ...f, imageUrl: e.target.value }))} placeholder="Paste a full image URL for the homepage banner" />
               </div>
               <button type="submit" className="btn btn-rsvp">Add event</button>
               {eventSubmitStatus.message && (

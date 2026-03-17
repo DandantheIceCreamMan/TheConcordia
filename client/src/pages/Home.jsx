@@ -15,7 +15,7 @@ export default function Home() {
         if (cancelled) return;
         const upcoming = events.filter((e) => !isPastEvent(e));
         const source = upcoming.length ? upcoming : events;
-        setFeatured(source.slice(0, 2));
+        setFeatured(source.slice(0, 3));
       })
       .catch((err) => {
         if (!cancelled) setError(err);
@@ -26,24 +26,34 @@ export default function Home() {
     return () => { cancelled = true; };
   }, []);
 
-  const bannerImages = [
-    {
-      url: 'https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?auto=format&fit=crop&w=1600&q=80',
-      alt: 'Candlelit dinner table with friends gathered'
-    },
-    {
-      url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=80',
-      alt: 'Warm common room with people talking and reading'
-    },
-    {
-      url: 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?auto=format&fit=crop&w=1600&q=80',
-      alt: 'Students walking through a museum gallery'
-    },
-    {
-      url: 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?auto=format&fit=crop&w=1600&q=80',
-      alt: 'Group of friends on an evening walk in the city'
+  const getBannerImage = (event) => {
+    if (event.imageUrl) {
+      return { url: event.imageUrl, alt: event.title || 'Event image' };
     }
-  ];
+    const title = (event.title || '').toLowerCase();
+    if (title.includes('dinner') || title.includes('supper')) {
+      return {
+        url: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1600&q=80',
+        alt: 'Long dinner table with warm candlelight and friends talking'
+      };
+    }
+    if (title.includes('mixer') || title.includes('social') || title.includes('party')) {
+      return {
+        url: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1600&q=80',
+        alt: 'Cozy common room with warm light and people talking'
+      };
+    }
+    if (title.includes('museum') || title.includes('gallery')) {
+      return {
+        url: 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?auto=format&fit=crop&w=1600&q=80',
+        alt: 'Students walking quietly through an art museum gallery'
+      };
+    }
+    return {
+      url: 'https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Friends walking together through a city street at dusk'
+    };
+  };
 
   return (
     <>
@@ -112,7 +122,7 @@ export default function Home() {
             )}
             {!loading && !error && featured.length > 0 && featured.map((event, index) => {
               const timeText = event.time ? ` · ${event.time}` : '';
-              const img = bannerImages[index % bannerImages.length];
+              const img = getBannerImage(event);
               const sideClass = index % 2 === 0 ? 'featured-banner--left' : 'featured-banner--right';
               return (
                 <Link
@@ -140,60 +150,6 @@ export default function Home() {
               );
             })}
           </div>
-        </div>
-      </section>
-
-      <section className="event-types" id="event-types" aria-labelledby="event-types-heading">
-        <h2 id="event-types-heading" className="event-types-title">
-          <span className="ornament-line" />
-          <span className="event-types-title-text">Evenings in the Common Room</span>
-          <span className="ornament-line" />
-        </h2>
-        <div className="container event-features">
-          <article className="event-feature event-feature--dinners">
-            <div className="event-feature-image" aria-hidden="true" />
-            <div className="event-feature-body">
-              <h3 className="event-feature-title">Supper Circuits</h3>
-              <p className="event-feature-text">
-                Candlelit progressive dinners that wander from kitchen to kitchen and table to table.
-                Think Austen‑style conversation, modern snacks, and the occasional card trick.
-              </p>
-              <Link to="/events" className="event-feature-link">See upcoming suppers</Link>
-            </div>
-          </article>
-          <article className="event-feature event-feature--parties">
-            <div className="event-feature-image" aria-hidden="true" />
-            <div className="event-feature-body">
-              <h3 className="event-feature-title">Common Room Parties</h3>
-              <p className="event-feature-text">
-                Nights where the lamps are low, the playlist runs from jazz to film scores,
-                and there is always a game of pool, cards, or Werewolf in progress.
-              </p>
-              <Link to="/events" className="event-feature-link">Browse house parties</Link>
-            </div>
-          </article>
-          <article className="event-feature event-feature--museum">
-            <div className="event-feature-image" aria-hidden="true" />
-            <div className="event-feature-body">
-              <h3 className="event-feature-title">Museum Walks</h3>
-              <p className="event-feature-text">
-                Small expeditions to galleries, museums, and curious corners of the city—followed
-                by debriefs back in the common room over tea or something stronger.
-              </p>
-              <Link to="/events" className="event-feature-link">Join the next walk</Link>
-            </div>
-          </article>
-          <article className="event-feature event-feature--outings">
-            <div className="event-feature-image" aria-hidden="true" />
-            <div className="event-feature-body">
-              <h3 className="event-feature-title">Outings & Escapes</h3>
-              <p className="event-feature-text">
-                Picnics on the lawn, winter movie marathons, midnight hot‑chocolate runs,
-                and other excuses to leave the library together.
-              </p>
-              <Link to="/events" className="event-feature-link">See all outings</Link>
-            </div>
-          </article>
         </div>
       </section>
 
