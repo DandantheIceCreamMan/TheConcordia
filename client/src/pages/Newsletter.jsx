@@ -87,7 +87,7 @@ export default function Newsletter() {
       <section className="section">
         <div className="container newsletter-container">
           <header className="newsletter-page-header">
-            <h1 className="newsletter-page-title">Common Room Chronicle</h1>
+            <h1 className="newsletter-page-title">Concordia</h1>
             <p className="newsletter-page-intro">
               Termly missives from the common room—announcements, recaps, and the occasional over‑dramatic anecdote. Subscribe to receive them by owl post.
             </p>
@@ -103,24 +103,58 @@ export default function Newsletter() {
                   <p className="chronicle-empty">No editions published yet. Check back after the next meeting.</p>
                 )}
                 {latest && (
-                  <button
-                    type="button"
-                    className="chronicle-teaser"
-                    onClick={() => setIsOpen(true)}
-                  >
-                    <div className="chronicle-teaser-inner">
-                      {latest.masthead && (
-                        <div className="chronicle-masthead" aria-hidden>{latest.masthead}</div>
+                  <>
+                    <button
+                      type="button"
+                      className="chronicle-teaser"
+                      onClick={() => setIsOpen(true)}
+                    >
+                      <div className="chronicle-teaser-inner">
+                        {latest.masthead && (
+                          <div className="chronicle-masthead" aria-hidden>{latest.masthead}</div>
+                        )}
+                        <h3 className="chronicle-headline">{latest.title}</h3>
+                        <p className="chronicle-date">{formatNewsletterDate(latest.date)}</p>
+                        <p className="chronicle-teaser-copy">
+                          {(latest.sections && latest.sections[0] && latest.sections[0].body)
+                            ? latest.sections[0].body.split('\n')[0]
+                            : "Open this term's Chronicle to read the full dispatch."}
+                        </p>
+                      </div>
+                    </button>
+
+                    <div className="newsletter-subscribe-inline">
+                      {!subscribeOpen && (
+                        <button
+                          type="button"
+                          className="btn-chronicle newsletter-subscribe-toggle"
+                          onClick={() => setSubscribeOpen(true)}
+                        >
+                          Subscribe to Concordia
+                        </button>
                       )}
-                      <h3 className="chronicle-headline">{latest.title}</h3>
-                      <p className="chronicle-date">{formatNewsletterDate(latest.date)}</p>
-                      <p className="chronicle-teaser-copy">
-                        {(latest.sections && latest.sections[0] && latest.sections[0].body)
-                          ? latest.sections[0].body.split('\n')[0]
-                          : "Open this term's Chronicle to read the full dispatch."}
-                      </p>
+                      {subscribeOpen && (
+                        <div className="newsletter-subscribe-block newsletter-subscribe-card">
+                          <button
+                            type="button"
+                            className="newsletter-subscribe-close"
+                            aria-label="Close subscribe form"
+                            onClick={() => setSubscribeOpen(false)}
+                          >
+                            ×
+                          </button>
+                          <form onSubmit={handleSubscribe} className="newsletter-subscribe-form">
+                            <div className="form-row">
+                              <label htmlFor="newsletter-email">Your email</label>
+                              <input id="newsletter-email" name="email" type="email" required placeholder="you@example.edu" />
+                            </div>
+                            <button type="submit" disabled={submittingSub} className="btn-chronicle">Subscribe</button>
+                            <p className="form-message">{subscribeMessage}</p>
+                          </form>
+                        </div>
+                      )}
                     </div>
-                  </button>
+                  </>
                 )}
               </div>
 
@@ -150,27 +184,6 @@ export default function Newsletter() {
               </div>
             </div>
 
-          </div>
-          <div className="newsletter-subscribe-inline">
-            <button
-              type="button"
-              className="btn-chronicle newsletter-subscribe-toggle"
-              onClick={() => setSubscribeOpen((open) => !open)}
-            >
-              {subscribeOpen ? 'Hide subscribe' : 'Subscribe to the Chronicle'}
-            </button>
-            {subscribeOpen && (
-              <div className="newsletter-subscribe-block">
-                <form onSubmit={handleSubscribe} className="newsletter-subscribe-form">
-                  <div className="form-row">
-                    <label htmlFor="newsletter-email">Your email</label>
-                    <input id="newsletter-email" name="email" type="email" required placeholder="you@example.edu" />
-                  </div>
-                  <button type="submit" disabled={submittingSub} className="btn-chronicle">Subscribe</button>
-                  <p className="form-message">{subscribeMessage}</p>
-                </form>
-              </div>
-            )}
           </div>
           {isOpen && latest && (
             <div className="newsletter-modal" role="dialog" aria-modal="true" aria-label={latest.title}>

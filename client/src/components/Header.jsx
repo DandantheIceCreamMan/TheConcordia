@@ -6,7 +6,7 @@ export default function Header() {
       <div className="container header-inner">
         <div className="brand">
           <h1 className="site-title">
-            <Link to="/">UATX Concordia</Link>
+            <Link to="/">The Concordian</Link>
           </h1>
           <p className="tagline">The Common Room for conversations, curiosities, and late-night schemes.</p>
         </div>

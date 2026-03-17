@@ -69,7 +69,7 @@ const newsletters = [
     id: 1,
     title: "Early Spring Dispatch",
     date: "2026-03-01",
-    masthead: "The Concordia Chronicle",
+    masthead: "The Concordia",
     sections: [
       {
         heading: "From the common room fire",
