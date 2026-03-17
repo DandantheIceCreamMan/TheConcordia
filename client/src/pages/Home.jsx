@@ -26,6 +26,25 @@ export default function Home() {
     return () => { cancelled = true; };
   }, []);
 
+  const bannerImages = [
+    {
+      url: 'https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Candlelit dinner table with friends gathered'
+    },
+    {
+      url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Warm common room with people talking and reading'
+    },
+    {
+      url: 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Students walking through a museum gallery'
+    },
+    {
+      url: 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?auto=format&fit=crop&w=1600&q=80',
+      alt: 'Group of friends on an evening walk in the city'
+    }
+  ];
+
   return (
     <>
       <section className="hero hero--with-bg" id="description">
@@ -91,27 +110,33 @@ export default function Home() {
             {!loading && !error && featured.length === 0 && (
               <p className="featured-empty">No evenings on the board yet. Check back soon—or propose one.</p>
             )}
-            {!loading && !error && featured.length > 0 && featured.map((event) => {
+            {!loading && !error && featured.length > 0 && featured.map((event, index) => {
               const timeText = event.time ? ` · ${event.time}` : '';
-              const capacityLine = event.maxCapacity != null
-                ? `${event.rsvpCount}/${event.maxCapacity} spots`
-                : `${event.rsvpCount || 0} going`;
+              const img = bannerImages[index % bannerImages.length];
+              const sideClass = index % 2 === 0 ? 'featured-banner--left' : 'featured-banner--right';
               return (
-                <article key={event.id} className="featured-card">
-                  <div className="featured-card-header">
-                    <h3 className="featured-card-title">{event.title}</h3>
-                    <p className="featured-card-meta">
-                      <span>{event.date}{timeText}</span>
-                      <span>{event.location}</span>
-                    </p>
+                <Link
+                  key={event.id}
+                  to="/events"
+                  className={`featured-banner ${sideClass}`}
+                  aria-label={`View upcoming evenings starting with ${event.title}`}
+                >
+                  <div
+                    className="featured-banner-inner"
+                    style={{ backgroundImage: `url(${img.url})` }}
+                  >
+                    <div className="featured-banner-overlay" />
+                    <div className="featured-banner-content">
+                      <h3 className="featured-banner-title">{event.title}</h3>
+                      <p className="featured-banner-meta">
+                        <span>{event.date}{timeText}</span>
+                        <span> · {event.location}</span>
+                      </p>
+                      <p className="featured-banner-body">{event.description}</p>
+                      <span className="featured-banner-cta">View all upcoming evenings →</span>
+                    </div>
                   </div>
-                  <p className="featured-card-body">{event.description}</p>
-                  <p className="featured-card-capacity">{capacityLine}</p>
-                  <div className="featured-card-actions">
-                    <Link to={`/event/${event.id}`} className="btn btn-rsvp">Details & RSVP</Link>
-                    <ShareButton eventId={event.id} className="btn btn-share" />
-                  </div>
-                </article>
+                </Link>
               );
             })}
           </div>
