@@ -20,6 +20,7 @@ export default function Newsletter() {
   const [submittingSub, setSubmittingSub] = useState(false);
   const [submittingStory, setSubmittingStory] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [subscribeOpen, setSubscribeOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -114,7 +115,9 @@ export default function Newsletter() {
                       <h3 className="chronicle-headline">{latest.title}</h3>
                       <p className="chronicle-date">{formatNewsletterDate(latest.date)}</p>
                       <p className="chronicle-teaser-copy">
-                        Open this term&apos;s Chronicle to read the full dispatch.
+                        {(latest.sections && latest.sections[0] && latest.sections[0].body)
+                          ? latest.sections[0].body.split('\n')[0]
+                          : "Open this term's Chronicle to read the full dispatch."}
                       </p>
                     </div>
                   </button>
@@ -147,20 +150,27 @@ export default function Newsletter() {
               </div>
             </div>
 
-            <aside className="newsletter-subscribe-block newsletter-subscribe-sidebar">
-              <h2 className="newsletter-subscribe-title">Subscribe</h2>
-              <p className="newsletter-subscribe-intro">
-                Join the mailing list for future editions.
-              </p>
-              <form onSubmit={handleSubscribe} className="newsletter-subscribe-form">
-                <div className="form-row">
-                  <label htmlFor="newsletter-email">Your email</label>
-                  <input id="newsletter-email" name="email" type="email" required placeholder="you@example.edu" />
-                </div>
-                <button type="submit" disabled={submittingSub} className="btn-chronicle">Subscribe</button>
-                <p className="form-message">{subscribeMessage}</p>
-              </form>
-            </aside>
+          </div>
+          <div className="newsletter-subscribe-inline">
+            <button
+              type="button"
+              className="btn-chronicle newsletter-subscribe-toggle"
+              onClick={() => setSubscribeOpen((open) => !open)}
+            >
+              {subscribeOpen ? 'Hide subscribe' : 'Subscribe to the Chronicle'}
+            </button>
+            {subscribeOpen && (
+              <div className="newsletter-subscribe-block">
+                <form onSubmit={handleSubscribe} className="newsletter-subscribe-form">
+                  <div className="form-row">
+                    <label htmlFor="newsletter-email">Your email</label>
+                    <input id="newsletter-email" name="email" type="email" required placeholder="you@example.edu" />
+                  </div>
+                  <button type="submit" disabled={submittingSub} className="btn-chronicle">Subscribe</button>
+                  <p className="form-message">{subscribeMessage}</p>
+                </form>
+              </div>
+            )}
           </div>
           {isOpen && latest && (
             <div className="newsletter-modal" role="dialog" aria-modal="true" aria-label={latest.title}>
