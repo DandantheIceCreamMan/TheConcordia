@@ -30,6 +30,7 @@ export default function Admin() {
   const [editingNewsletterId, setEditingNewsletterId] = useState(null);
   const [editNewsletterForm, setEditNewsletterForm] = useState(null);
   const [rsvpsForEvent, setRsvpsForEvent] = useState(null);
+  const [showSubscriberList, setShowSubscriberList] = useState(false);
 
   const loadAll = async () => {
     setLoading(true);
@@ -708,7 +709,10 @@ export default function Admin() {
 
           <details className="admin-block">
             <summary><h3>Newsletters</h3></summary>
-            <p className="section-intro">Subscribers ({subscribers.length}) receive the newsletter when you click &quot;Send to subscribers&quot;. Manage who can subscribe on the public Newsletter page.</p>
+            <p className="section-intro">
+              Subscribers ({subscribers.length}) receive the latest issue when you publish a newsletter or use &quot;Send to subscribers&quot;.
+              You can see who is subscribed from this panel.
+            </p>
             {newsletters.length > 0 && (
               <ul className="admin-event-list">
                 {newsletters.map((n) => (
@@ -722,6 +726,27 @@ export default function Admin() {
                   </li>
                 ))}
               </ul>
+            )}
+            <div className="admin-header-actions">
+              <button
+                type="button"
+                className="btn btn-share"
+                onClick={() => setShowSubscriberList((open) => !open)}
+              >
+                {showSubscriberList ? 'Hide subscribers' : `View subscribers (${subscribers.length})`}
+              </button>
+            </div>
+            {showSubscriberList && (
+              <div className="admin-subscriber-panel">
+                {subscribers.length === 0 && <p>No subscribers yet.</p>}
+                {subscribers.length > 0 && (
+                  <ul className="admin-list-simple">
+                    {subscribers.map((s) => (
+                      <li key={s.id}>{s.email}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
             {editingNewsletterId && editNewsletterForm && (
               <form onSubmit={handleUpdateNewsletter} className="admin-form">
@@ -798,16 +823,6 @@ export default function Admin() {
                   <p>{i.idea}</p>
                   <button type="button" className="btn btn-share" onClick={() => handleDeleteIdea(i.id)}>Remove</button>
                 </li>
-              ))}
-            </ul>
-          </details>
-
-          <details className="admin-block">
-            <summary><h3>Newsletter subscribers ({subscribers.length})</h3></summary>
-            {subscribers.length === 0 && <p>No subscribers yet.</p>}
-            <ul className="admin-list-simple">
-              {subscribers.map((s) => (
-                <li key={s.id}>{s.email}</li>
               ))}
             </ul>
           </details>

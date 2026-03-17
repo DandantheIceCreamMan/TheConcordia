@@ -1203,6 +1203,14 @@ button:disabled {
   gap: var(--space-unit);
 }
 
+.admin-subscriber-panel {
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  background: var(--color-parchment);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
 .admin-meta {
   font-size: 0.9rem;
   color: var(--color-ink-muted);

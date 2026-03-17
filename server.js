@@ -385,7 +385,27 @@ function parseNewsletterBody(body) {
   };
 }
 
-app.post('/api/admin/newsletters', requireAdmin, (req, res) => {
+async function sendNewsletterToSubscribers(newsletter) {
+  const transporter = getMailTransporter();
+  if (!transporter) {
+    return { ok: false, error: "Email not configured." };
+  }
+  const emails = newsletterSubscribers.map((s) => s.email).filter(Boolean);
+  if (emails.length === 0) {
+    return { ok: false, error: "No subscribers to send to." };
+  }
+  const from = process.env.MAIL_FROM || process.env.SMTP_USER;
+  const html = newsletterToHtml(newsletter);
+  await transporter.sendMail({
+    from: `"The Concordian" <${from}>`,
+    to: emails,
+    subject: newsletter.title,
+    html
+  });
+  return { ok: true, sent: emails.length };
+}
+
+app.post('/api/admin/newsletters', requireAdmin, async (req, res) => {
   const parsed = parseNewsletterBody(req.body);
   if (!parsed) return res.status(400).json({ error: 'Title and at least one section (or content) are required.' });
   const newsletter = {
@@ -393,6 +413,8 @@ app.post('/api/admin/newsletters', requireAdmin, (req, res) => {
     ...parsed
   };
   newsletters.push(newsletter);
+  // Try to email all subscribers with the latest issue, but don't fail creation if email sending breaks.
+  sendNewsletterToSubscribers(newsletter).catch(() => {});
   res.status(201).json(normalizeNewsletter(newsletter));
 });
 
