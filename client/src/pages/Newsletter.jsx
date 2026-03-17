@@ -89,83 +89,93 @@ export default function Newsletter() {
             </p>
           </header>
 
-          <div className="newsletter-subscribe-block">
-            <h2 className="newsletter-subscribe-title">Subscribe</h2>
-            <p className="newsletter-subscribe-intro">
-              Give us your email and we shall add you to the distribution list.
-            </p>
-            <form onSubmit={handleSubscribe} className="newsletter-subscribe-form">
-              <div className="form-row">
-                <label htmlFor="newsletter-email">Your email</label>
-                <input id="newsletter-email" name="email" type="email" required placeholder="you@example.edu" />
+          <div className="newsletter-layout">
+            <div className="newsletter-main-column">
+              <div className="chronicle-archive">
+                <h2 className="chronicle-archive-title">Latest edition</h2>
+                {loading && <p className="chronicle-loading">Loading editions…</p>}
+                {error && <p className="chronicle-error">Failed to load newsletters.</p>}
+                {!loading && !error && newsletters.length === 0 && (
+                  <p className="chronicle-empty">No editions published yet. Check back after the next meeting.</p>
+                )}
+                {!loading && !error && newsletters.length > 0 && (
+                  (() => {
+                    const current = newsletters[0];
+                    if (!current) return null;
+                    return (
+                      <article
+                        className="chronicle-edition chronicle-edition--full"
+                        aria-label={current.title}
+                      >
+                        <div className="chronicle-edition-inner">
+                          {current.masthead && (
+                            <div className="chronicle-masthead" aria-hidden>{current.masthead}</div>
+                          )}
+                          <h3 className="chronicle-headline">{current.title}</h3>
+                          <p className="chronicle-date">{formatNewsletterDate(current.date)}</p>
+                          <div className="chronicle-sections">
+                            {(current.sections || []).map((sec, idx) => (
+                              <section key={idx} className="chronicle-section">
+                                {sec.heading && (
+                                  <h4 className="chronicle-section-head">{sec.heading}</h4>
+                                )}
+                                <div className="chronicle-section-body">
+                                  {sec.body.split(/\n/).map((para, i) => (
+                                    para.trim() ? <p key={i}>{para}</p> : null
+                                  ))}
+                                </div>
+                              </section>
+                            ))}
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })()
+                )}
               </div>
-              <button type="submit" disabled={submittingSub} className="btn-chronicle">Subscribe</button>
-              <p className="form-message">{subscribeMessage}</p>
-            </form>
+
+              <div className="newsletter-story-block">
+                <h2 className="newsletter-story-title">Submit a story</h2>
+                <p>
+                  Did a conversation wander somewhere marvellous? Did a game night or museum walk
+                  turn into a story worth retelling? Send it in—you might find it immortalised in
+                  the next Chronicle.
+                </p>
+                <form onSubmit={handleStory}>
+                  <div className="form-row">
+                    <label htmlFor="story-name">Name (optional)</label>
+                    <input id="story-name" name="name" type="text" />
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="story-email">Email (optional)</label>
+                    <input id="story-email" name="email" type="email" />
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="story-text">Your story</label>
+                    <textarea id="story-text" name="story" rows={5} required />
+                  </div>
+                  <button type="submit" disabled={submittingStory} className="btn-chronicle">Submit story</button>
+                  <p className="form-message form-message--story">{storyMessage}</p>
+                </form>
+              </div>
+            </div>
+
+            <aside className="newsletter-subscribe-block newsletter-subscribe-sidebar">
+              <h2 className="newsletter-subscribe-title">Subscribe</h2>
+              <p className="newsletter-subscribe-intro">
+                Join the mailing list for future editions.
+              </p>
+              <form onSubmit={handleSubscribe} className="newsletter-subscribe-form">
+                <div className="form-row">
+                  <label htmlFor="newsletter-email">Your email</label>
+                  <input id="newsletter-email" name="email" type="email" required placeholder="you@example.edu" />
+                </div>
+                <button type="submit" disabled={submittingSub} className="btn-chronicle">Subscribe</button>
+                <p className="form-message">{subscribeMessage}</p>
+              </form>
+            </aside>
           </div>
 
-          <div className="chronicle-archive">
-            <h2 className="chronicle-archive-title">Archive</h2>
-            {loading && <p className="chronicle-loading">Loading editions…</p>}
-            {error && <p className="chronicle-error">Failed to load newsletters.</p>}
-            {!loading && !error && newsletters.length === 0 && (
-              <p className="chronicle-empty">No editions published yet. Check back after the next meeting.</p>
-            )}
-            {!loading && !error && newsletters.length > 0 && (
-              <div className="chronicle-editions">
-                {newsletters.map((n) => (
-                  <article key={n.id} className="chronicle-edition">
-                    <div className="chronicle-edition-inner">
-                      {n.masthead && (
-                        <div className="chronicle-masthead" aria-hidden>{n.masthead}</div>
-                      )}
-                      <h3 className="chronicle-headline">{n.title}</h3>
-                      <p className="chronicle-date">{formatNewsletterDate(n.date)}</p>
-                      <div className="chronicle-sections">
-                        {(n.sections || []).map((sec, idx) => (
-                          <section key={idx} className="chronicle-section">
-                            {sec.heading && (
-                              <h4 className="chronicle-section-head">{sec.heading}</h4>
-                            )}
-                            <div className="chronicle-section-body">
-                              {sec.body.split(/\n/).map((para, i) => (
-                                para.trim() ? <p key={i}>{para}</p> : null
-                              ))}
-                            </div>
-                          </section>
-                        ))}
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="newsletter-story-block">
-            <h2 className="newsletter-story-title">Submit a story</h2>
-            <p>
-              Did a conversation wander somewhere marvellous? Did a game night or museum walk
-              turn into a story worth retelling? Send it in—you might find it immortalised in
-              the next Chronicle.
-            </p>
-            <form onSubmit={handleStory}>
-              <div className="form-row">
-                <label htmlFor="story-name">Name (optional)</label>
-                <input id="story-name" name="name" type="text" />
-              </div>
-              <div className="form-row">
-                <label htmlFor="story-email">Email (optional)</label>
-                <input id="story-email" name="email" type="email" />
-              </div>
-              <div className="form-row">
-                <label htmlFor="story-text">Your story</label>
-                <textarea id="story-text" name="story" rows={5} required />
-              </div>
-              <button type="submit" disabled={submittingStory} className="btn-chronicle">Submit story</button>
-              <p className="form-message form-message--story">{storyMessage}</p>
-            </form>
-          </div>
         </div>
       </section>
     </div>

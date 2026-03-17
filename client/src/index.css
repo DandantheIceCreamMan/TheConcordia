@@ -1345,7 +1345,7 @@ button:disabled {
 
 .newsletter-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
   gap: var(--space-xl);
 }
 
@@ -1355,7 +1355,7 @@ button:disabled {
 }
 
 .newsletter-container {
-  max-width: 720px;
+  max-width: 960px;
 }
 
 .newsletter-page-header {
@@ -1378,12 +1378,19 @@ button:disabled {
 }
 
 .newsletter-subscribe-block {
-  margin-bottom: var(--space-xl);
-  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
   background: var(--color-ivory);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.newsletter-subscribe-sidebar {
+  align-self: flex-start;
+  position: sticky;
+  top: 6.5rem;
+  max-width: 260px;
 }
 
 .newsletter-subscribe-title,
@@ -1424,6 +1431,54 @@ button:disabled {
 /* Chronicle edition: newspaper / Daily Prophet style */
 .chronicle-archive {
   margin-bottom: var(--space-xl);
+}
+
+.chronicle-archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.chronicle-archive-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  text-align: left;
+  color: var(--color-ink-muted);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.chronicle-archive-item:hover {
+  background: rgba(253, 252, 250, 0.9);
+  border-color: var(--color-border);
+  color: var(--color-ink);
+}
+
+.chronicle-archive-item--active {
+  border-color: var(--color-burgundy);
+  background: rgba(92, 42, 46, 0.08);
+  color: var(--color-ink);
+}
+
+.chronicle-archive-title-text {
+  font-weight: 600;
+}
+
+.chronicle-archive-date {
+  font-size: 0.85rem;
+  color: var(--color-ink-muted);
 }
 
 .chronicle-archive-title {
@@ -1677,6 +1732,7 @@ button:disabled {
     width: 100%;
   }
 
+  .newsletter-layout,
   .join-grid {
     grid-template-columns: 1fr;
   }
